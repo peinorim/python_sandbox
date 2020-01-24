@@ -1,0 +1,44 @@
+import dash
+import dash_html_components as html
+import dash_core_components as dcc
+from fbprophet import Prophet
+from fbprophet.plot import plot_plotly
+import pandas as pd
+from math import inf
+
+STOCK = 'TSLA'
+
+
+def format_forecast():
+    forecast = {'ds': [], 'y': []}
+    df = pd.read_csv(f"/media/sf_workspace/{STOCK}.csv", encoding='utf-8', delimiter=",", keep_default_na=False)
+    for i in range(len(df.values)):
+        forecast['ds'].append(df.values[i][0])
+        forecast['y'].append(df.values[i][4])
+    return {'forecast': forecast}
+
+
+app = dash.Dash(__name__)
+
+forecast = format_forecast()
+
+df = pd.DataFrame.from_dict(forecast['forecast'])
+
+m = Prophet()
+m.fit(df)
+future = m.make_future_dataframe(periods=365 * 2)
+forecast = m.predict(future)
+
+forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=True, changepoints=True,
+                           changepoints_threshold=0.01)
+
+forecast_fig['layout']['showlegend'] = True
+forecast_fig['layout']['width'] = inf
+
+app.layout = html.Div(children=[
+    html.H1(children=f'{STOCK} forecast'),
+    dcc.Graph(id='forecast-graph', figure=forecast_fig)
+])
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
