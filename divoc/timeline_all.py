@@ -6,50 +6,38 @@ import requests
 
 app = dash.Dash(__name__)
 
-COUNTRY = "France"
-
-data = {
-    "dates": [],
-    "confirmed": [],
-    "deaths": [],
-    "recovered": []
-}
-
 
 def data_figure():
     r = requests.get(url="https://pomber.github.io/covid19/timeseries.json")
     result = r.json()
-    for res in result[COUNTRY]:
-        data['dates'].append(res['date'])
-        data['confirmed'].append(res['confirmed'])
-        data['deaths'].append(res['deaths'])
-        data['recovered'].append(res['recovered'])
-
     fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=data['dates'],
-        y=data['confirmed'],
-        name="confirmed",
-        opacity=0.8))
 
-    fig.add_trace(go.Scatter(
-        x=data['dates'],
-        y=data['deaths'],
-        name="deaths",
-        opacity=0.8))
+    for res in result:
+        data = {
+            "dates": [],
+            "confirmed": [],
+            "deaths": [],
+            "recovered": []
+        }
 
-    fig.add_trace(go.Scatter(
-        x=data['dates'],
-        y=data['recovered'],
-        name="recovered",
-        opacity=0.8))
+        for day in result[res]:
+            data['dates'].append(day['date'])
+            data['confirmed'].append(day['confirmed'])
+            data['deaths'].append(day['deaths'])
+            data['recovered'].append(day['recovered'])
+
+        fig.add_trace(go.Scatter(
+            x=data['dates'],
+            y=data['confirmed'],
+            name=res,
+            opacity=0.8))
 
     # Use date string to set xaxis range
     fig['layout']['showlegend'] = True
+    fig['layout']['height'] = 700
 
     fig.update_layout(
         xaxis=go.layout.XAxis(
-            title_text=COUNTRY,
             tickformat="%d/%m/%Y",
             rangeselector=dict(
                 buttons=list([
@@ -83,7 +71,7 @@ def data_figure():
 
 
 app.layout = html.Div(children=[
-    html.H1(children=f'{COUNTRY} timeline'),
+    html.H1(children=f'All countries confirmed cases'),
     dcc.Graph(id='timeline-graph', figure=data_figure())
 ])
 
