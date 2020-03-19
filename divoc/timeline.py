@@ -6,7 +6,7 @@ import requests
 
 app = dash.Dash(__name__)
 
-COUNTRY = "France"
+COUNTRY = "China"
 
 data = {
     "dates": [],

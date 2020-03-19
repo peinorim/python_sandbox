@@ -6,6 +6,8 @@ import requests
 
 app = dash.Dash(__name__)
 
+TYPE = 'confirmed'
+
 
 def data_figure():
     r = requests.get(url="https://pomber.github.io/covid19/timeseries.json")
@@ -28,7 +30,7 @@ def data_figure():
 
         fig.add_trace(go.Scatter(
             x=data['dates'],
-            y=data['confirmed'],
+            y=data[TYPE],
             name=res,
             opacity=0.8))
 
@@ -71,7 +73,7 @@ def data_figure():
 
 
 app.layout = html.Div(children=[
-    html.H1(children=f'All countries confirmed cases'),
+    html.H1(children=f'All countries {TYPE} cases'),
     dcc.Graph(id='timeline-graph', figure=data_figure())
 ])
 
