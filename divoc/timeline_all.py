@@ -12,6 +12,7 @@ TYPE = 'confirmed'
 def data_figure():
     r = requests.get(url="https://pomber.github.io/covid19/timeseries.json")
     result = r.json()
+    result = dict(sorted(result.items()))
     fig = go.Figure()
 
     for res in result:
