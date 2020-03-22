@@ -7,6 +7,7 @@ import requests
 app = dash.Dash(__name__)
 
 TYPE = 'confirmed'
+COUNTRIES = ['France', 'China', 'Italy', 'United Kingdom', 'US', 'Germany', 'all']
 
 
 def data_figure():
@@ -16,24 +17,25 @@ def data_figure():
     fig = go.Figure()
 
     for res in result:
-        data = {
-            "dates": [],
-            "confirmed": [],
-            "deaths": [],
-            "recovered": []
-        }
+        if res in COUNTRIES or 'all' in COUNTRIES:
+            data = {
+                "dates": [],
+                "confirmed": [],
+                "deaths": [],
+                "recovered": []
+            }
 
-        for day in result[res]:
-            data['dates'].append(day['date'])
-            data['confirmed'].append(day['confirmed'])
-            data['deaths'].append(day['deaths'])
-            data['recovered'].append(day['recovered'])
+            for day in result[res]:
+                data['dates'].append(day['date'])
+                data['confirmed'].append(day['confirmed'])
+                data['deaths'].append(day['deaths'])
+                data['recovered'].append(day['recovered'])
 
-        fig.add_trace(go.Scatter(
-            x=data['dates'],
-            y=data[TYPE],
-            name=res,
-            opacity=0.8))
+            fig.add_trace(go.Scatter(
+                x=data['dates'],
+                y=data[TYPE],
+                name=res,
+                opacity=0.8))
 
     # Use date string to set xaxis range
     fig['layout']['showlegend'] = True
