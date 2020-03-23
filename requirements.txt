@@ -2,4 +2,5 @@ requests
 gunicorn
 dash
 dash_bootstrap_components
+pystan==2.19.0
 fbprophet
