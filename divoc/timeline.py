@@ -1,7 +1,7 @@
+from datetime import datetime
+
 import plotly.graph_objects as go
 import dash
-import dash_core_components as dcc
-import requests
 
 app = dash.Dash(__name__)
 
@@ -14,7 +14,7 @@ class Timeline:
         self.countries = countries
         self.data = data
 
-    def data_figure(self):
+    def get_figure(self):
         fig = go.Figure()
 
         for res in self.data:
@@ -27,7 +27,7 @@ class Timeline:
                 }
 
                 for day in self.data[res]:
-                    data['dates'].append(day['date'])
+                    data['dates'].append(datetime.strptime(day['date'], '%Y-%m-%d'))
                     data['confirmed'].append(day['confirmed'])
                     data['deaths'].append(day['deaths'])
                     data['recovered'].append(day['recovered'])
@@ -64,9 +64,13 @@ class Timeline:
         fig['layout']['height'] = 700
 
         fig.update_layout(
+            # paper_bgcolor="#2B3E50",
+            # plot_bgcolor="rgba(1.0, 1.0, 1.0, 0.1)",
             title=f"{graph_title} cases",
+            # titlefont={"color": "#FFF"},
             xaxis=go.layout.XAxis(
-                tickformat="%d/%m/%Y",
+                # tickfont={"color": "#FFF"},
+                tickformat="%Y-%m-%d",
                 rangeselector=dict(
                     buttons=list([
                         dict(count=1,
@@ -78,7 +82,7 @@ class Timeline:
                              step="month",
                              stepmode="backward"),
                         dict(count=1,
-                             label="AAJ",
+                             label="YTD",
                              step="year",
                              stepmode="todate"),
                         dict(count=1,
@@ -93,6 +97,9 @@ class Timeline:
                 ),
                 type="date"
             ),
-            yaxis=dict(showgrid=True),
+            yaxis=dict(
+                showgrid=True,
+                # tickfont={"color": "#FFF"},
+            ),
         )
         return fig
