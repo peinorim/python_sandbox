@@ -7,6 +7,7 @@ import dash_core_components as dcc
 
 import dash_bootstrap_components as dbc
 import requests
+from dash.dependencies import Input, Output
 
 from divoc.forecast import Forecast
 from divoc.map import Map
@@ -44,8 +45,8 @@ forecast = Forecast(data=data, country="France", type="confirmed")
 map = Map(data=data, type="confirmed")
 
 app.layout = html.Div(children=[
-    html.H1(f"COVID-19 Worldwide data", style={"textAlign": "center", "padding": "20px 0"}),
-
+    html.H1(f"COVID-19 Worldwide data", style={"textAlign": "center", "padding": "10px 0"}),
+    html.H6(f"Last update on : {last_date:%Y-%m-%d}", style={"textAlign": "center", "padding": "10px 0"}),
     html.Header([
         dbc.Row(
             [
@@ -63,7 +64,8 @@ app.layout = html.Div(children=[
                     dbc.Card(
                         dbc.CardBody(
                             [
-                                html.H4('{0:n}'.format(deaths_tot), className="card-title"),
+                                html.H4(f"{'{0:n}'.format(deaths_tot)} ({round((deaths_tot / confirmed_tot) * 100)}%)",
+                                        className="card-title"),
                                 html.H6("Deaths", className="card-subtitle")
                             ]
                         )
@@ -73,7 +75,9 @@ app.layout = html.Div(children=[
                     dbc.Card(
                         dbc.CardBody(
                             [
-                                html.H4('{0:n}'.format(recovered_tot), className="card-title"),
+                                html.H4(
+                                    f"{'{0:n}'.format(recovered_tot)} ({round((recovered_tot / confirmed_tot) * 100)}%)",
+                                    className="card-title"),
                                 html.H6("Recovered", className="card-subtitle")
                             ]
                         )
@@ -95,7 +99,8 @@ app.layout = html.Div(children=[
                     id='types-dropdown',
                     options=types,
                     multi=False,
-                    value="Confirmed",
+                    clearable=False,
+                    value="confirmed",
                     placeholder="Select a type of data",
                 ), className="col-md-3"
             )
@@ -109,6 +114,8 @@ app.layout = html.Div(children=[
                 dcc.Dropdown(
                     id='country-dropdown',
                     options=countries,
+                    clearable=False,
+                    value='France',
                     multi=False,
                     placeholder="Select one country",
                 ), className="col-md-3"
@@ -119,11 +126,43 @@ app.layout = html.Div(children=[
     ]
     ),
     html.Footer([
-        html.P(f"Last update on : {last_date:%Y-%m-%d}"),
         html.A("Data provided by pomber", href="https://github.com/pomber", target="_blank"),
     ], style={"textAlign": "center", "padding": "20px 0"})
 
 ], className="container-fluid")
+
+
+@app.callback([
+    Output(component_id='timeline-all-graph', component_property='figure'),
+    Output(component_id='map-graph', component_property='figure')
+],
+    [
+        Input(component_id='countries-dropdown', component_property='value'),
+        Input(component_id='types-dropdown', component_property='value'),
+    ]
+)
+def update_countries(countries, type):
+    timeline_all = Timeline(data=data, countries=countries, type=type)
+    map = Map(data=data, type=type)
+
+    return timeline_all.get_figure(), map.get_figure()
+
+
+@app.callback([
+    Output(component_id='timeline-one-graph', component_property='figure'),
+    Output(component_id='forecast-graph', component_property='figure')
+],
+    [
+        Input(component_id='country-dropdown', component_property='value'),
+        Input(component_id='types-dropdown', component_property='value'),
+    ]
+)
+def update_country(country, type):
+    timeline_one = Timeline(data=data, countries=[country])
+    forecast = Forecast(data=data, country=country, type=type)
+
+    return timeline_one.get_figure(), forecast.get_figure()
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

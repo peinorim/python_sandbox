@@ -18,7 +18,7 @@ class Timeline:
         fig = go.Figure()
 
         for res in self.data:
-            if res in self.countries or len(self.countries) == 0:
+            if self.countries is None or res in self.countries or len(self.countries) == 0:
                 data = {
                     "dates": [],
                     "confirmed": [],
@@ -32,7 +32,7 @@ class Timeline:
                     data['deaths'].append(day['deaths'])
                     data['recovered'].append(day['recovered'])
 
-                if len(self.countries) > 1 or len(self.countries) == 0:
+                if self.countries is None or len(self.countries) > 1 or len(self.countries) == 0:
                     graph_title = self.type
                     fig.add_trace(go.Scatter(
                         x=data['dates'],
@@ -70,6 +70,8 @@ class Timeline:
             # titlefont={"color": "#FFF"},
             xaxis=go.layout.XAxis(
                 # tickfont={"color": "#FFF"},
+                range=[datetime.strptime("2020-02-23", '%Y-%m-%d'), datetime.now()],
+                autorange=False,
                 tickformat="%Y-%m-%d",
                 rangeselector=dict(
                     buttons=list([

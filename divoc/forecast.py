@@ -38,7 +38,7 @@ class Forecast:
         forecast_fig['layout']['height'] = 700
 
         forecast_fig.update_layout(
-            title=f"{self.country} {self.type} cases forecast for the next 90 days",
+            title=f"{self.country} {self.type} cases trend forecast for the next 90 days",
             xaxis=go.layout.XAxis(
                 tickformat="%Y-%m-%d",
                 rangeselector=dict(
