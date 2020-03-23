@@ -8,7 +8,7 @@ class Map:
     def __init__(self, data=None, type=None):
         self.type = type
         self.data = data
-        with open("countries.geo.json") as response:
+        with open("divoc/countries.geo.json") as response:
             self.geojson = json.load(response)
 
     def get_figure(self):
