@@ -1,1 +1,1 @@
-web: gunicorn divoc.wsgi:application
+web: gunicorn divoc.wsgi:application  --timeout 560
