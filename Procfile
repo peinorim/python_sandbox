@@ -1,1 +1,1 @@
-web: gunicorn divoc.app:app
+web: gunicorn divoc.wsgi:application
