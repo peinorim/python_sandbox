@@ -44,7 +44,7 @@ for country in data:
         tots['last_date'] = datetime.strptime(data[country][-1].get('date'), '%m/%d/%y')
 
 timeline_all = Timeline(data=data, countries=[], type="confirmed")
-timeline_one = Timeline(data=data, countries=["France"])
+timeline_one = Timeline(data=data, countries=["France"], type="confirmed")
 forecast = Forecast(data=data, country="France", type="confirmed")
 map = Map(data=data, type="confirmed", tots=tots)
 
@@ -112,8 +112,8 @@ app.layout = html.Div(children=[
         ], className="col-md-12 row")
     ], className="row"),
     dbc.Row([
-        html.Div([dcc.Graph(id='timeline-all-graph', figure=timeline_all.get_figure())], className="col-md-6"),
-        html.Div([dcc.Graph(id='map-graph', figure=map.get_figure())], className="col-md-6"),
+        html.Div([dcc.Graph(id='timeline-all-graph', figure={})], className="col-md-6"),
+        html.Div([dcc.Graph(id='map-graph', figure={})], className="col-md-6"),
         html.Div(
             html.Div(
                 dcc.Dropdown(
@@ -126,13 +126,12 @@ app.layout = html.Div(children=[
                 ), className="col-md-3"
             ), className="col-md-12 row"
         ),
-        html.Div([dcc.Graph(id='timeline-one-graph', figure=timeline_one.get_figure())], className="col-md-6"),
-        html.Div([dcc.Graph(id='donut-one-graph', figure=timeline_one.get_figure())], className="col-md-6"),
-        html.Div([dcc.Graph(id='forecast-graph', figure=forecast.get_figure())], className="col-md-12 hidden"),
+        html.Div([dcc.Graph(id='timeline-one-graph', figure={})], className="col-md-6"),
+        html.Div([dcc.Graph(id='forecast-graph', figure={})], className="col-md-6"),
     ]
     ),
     html.Footer([
-        html.A("Data provided by pomber", href="https://github.com/pomber", target="_blank"),
+        html.A("Data provided by CSSEGISandData", href="https://github.com/CSSEGISandData/COVID-19", target="_blank"),
     ], style={"textAlign": "center", "padding": "20px 0"})
 
 ], className="container-fluid")
@@ -149,7 +148,7 @@ app.layout = html.Div(children=[
 )
 def update_countries(countries, type):
     timeline_all = Timeline(data=data, countries=countries, type=type)
-    map = Map(data=data, type=type)
+    map = Map(data=data, type=type, tots=tots)
 
     return timeline_all.get_figure(), map.get_figure()
 
@@ -164,7 +163,7 @@ def update_countries(countries, type):
     ]
 )
 def update_country(country, type):
-    timeline_one = Timeline(data=data, countries=[country])
+    timeline_one = Timeline(data=data, countries=[country], type=type)
     forecast = Forecast(data=data, country=country, type=type)
 
     return timeline_one.get_figure(), forecast.get_figure()
