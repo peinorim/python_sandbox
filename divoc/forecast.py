@@ -1,3 +1,4 @@
+import os
 from math import inf
 
 from fbprophet import Prophet
@@ -25,6 +26,8 @@ class Forecast:
         return pd.DataFrame.from_dict(forecast)
 
     def get_figure(self):
+        if os.environ.get('FORECAST', 0) != 1:
+            return {}
         m = Prophet()
         m.fit(self.format_forecast())
         future = m.make_future_dataframe(periods=PERIODS)

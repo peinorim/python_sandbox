@@ -1,36 +1,39 @@
-import json
-
 import plotly.graph_objects as go
 
 
 class Map:
 
-    def __init__(self, data=None, type=None):
+    def __init__(self, data=None, type=None, tots=None):
         self.type = type
         self.data = data
-        with open("countries.geo.json") as response:
-            self.geojson = json.load(response)
+        self.tots = tots
 
     def get_figure(self):
-        locations = []
-        count_by_locations = []
+        fig = go.Figure()
 
-        for res in self.data:
-            locations.append(res)
-            count_by_locations.append(self.data[res][-1].get(self.type))
-
-        zmin = min(count_by_locations) if len(count_by_locations) > 0 else None
-        zmax = max(count_by_locations) if len(count_by_locations) > 0 else None
-
-        fig = go.Figure(go.Choroplethmapbox(geojson=self.geojson, locations=locations, z=count_by_locations,
-                                            colorscale="reds", zmin=zmin, zmax=zmax,
-                                            marker_opacity=1, marker_line_width=0.2))
+        for country in self.data:
+            if self.data[country] and self.data[country][-1][self.type] and self.data[country][-1].get('long') and \
+                    self.data[country][-1].get('lat'):
+                fig.add_trace(go.Scattergeo(
+                    lon=[self.data[country][-1]['long']],
+                    lat=[self.data[country][-1]['lat']],
+                    text=f'{country} : {self.data[country][-1][self.type]} cases',
+                    marker=dict(
+                        size=self.data[country][-1][self.type] / (self.tots[self.type] / 400),
+                        line_color='rgb(40,40,40)',
+                        line_width=0.5,
+                        sizemode='area'
+                    ),
+                    name=country
+                ))
         fig.update_layout(
             title=f'World {self.type} cases map',
-            mapbox_style="carto-positron",
-            mapbox_center={"lat": 46.625708, "lon": 2.460577},
             height=700,
-            mapbox_zoom=1
+            showlegend=False,
+            geo=dict(
+                scope='world',
+                landcolor='rgb(217, 217, 217)',
+            )
         )
 
         return fig

@@ -6,9 +6,10 @@ import dash_html_components as html
 import dash_core_components as dcc
 
 import dash_bootstrap_components as dbc
-import requests
+
 from dash.dependencies import Input, Output
 
+from divoc import Data
 from divoc.forecast import Forecast
 from divoc.map import Map
 from divoc.timeline import Timeline
@@ -18,35 +19,38 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets, assets_exte
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 TYPE = 'confirmed'
-r = requests.get(url="https://pomber.github.io/covid19/timeseries.json")
-data = r.json()
-data = dict(sorted(data.items()))
+data = Data().data
+
 countries = []
 types = [
     {'label': "Confirmed", 'value': "confirmed"},
     {'label': "Deaths", 'value': "deaths"},
     {'label': "Recovered", 'value': "recovered"},
 ]
-confirmed_tot = 0
-deaths_tot = 0
-recovered_tot = 0
-last_date = None
+
+tots = {
+    'last_date': None,
+    'confirmed': 0,
+    'deaths': 0,
+    'recovered': 0
+}
 
 for country in data:
-    countries.append({'label': country, 'value': country})
-    confirmed_tot += data[country][-1].get('confirmed')
-    deaths_tot += data[country][-1].get('deaths')
-    recovered_tot += data[country][-1].get('recovered')
-    last_date = datetime.strptime(data[country][-1].get('date'), '%Y-%m-%d')
+    if len(data[country]) > 0:
+        countries.append({'label': country, 'value': country})
+        tots['confirmed'] += data[country][-1].get('confirmed', 0)
+        tots['deaths'] += data[country][-1].get('deaths', 0)
+        tots['recovered'] += data[country][-1].get('recovered', 0)
+        tots['last_date'] = datetime.strptime(data[country][-1].get('date'), '%m/%d/%y')
 
 timeline_all = Timeline(data=data, countries=[], type="confirmed")
 timeline_one = Timeline(data=data, countries=["France"])
 forecast = Forecast(data=data, country="France", type="confirmed")
-map = Map(data=data, type="confirmed")
+map = Map(data=data, type="confirmed", tots=tots)
 
 app.layout = html.Div(children=[
     html.H1(f"COVID-19 Worldwide data", style={"textAlign": "center", "padding": "10px 0"}),
-    html.H6(f"Last update on : {last_date:%Y-%m-%d}", style={"textAlign": "center", "padding": "10px 0"}),
+    html.H6(f"Last update on : {tots['last_date']:%Y-%m-%d}", style={"textAlign": "center", "padding": "10px 0"}),
     html.Header([
         dbc.Row(
             [
@@ -54,7 +58,7 @@ app.layout = html.Div(children=[
                     dbc.Card(
                         dbc.CardBody(
                             [
-                                html.H4('{0:n}'.format(confirmed_tot), className="card-title"),
+                                html.H4('{0:n}'.format(tots['confirmed']), className="card-title"),
                                 html.H6("Confirmed cases", className="card-subtitle")
                             ]
                         )
@@ -64,8 +68,9 @@ app.layout = html.Div(children=[
                     dbc.Card(
                         dbc.CardBody(
                             [
-                                html.H4(f"{'{0:n}'.format(deaths_tot)} ({round((deaths_tot / confirmed_tot) * 100)}%)",
-                                        className="card-title"),
+                                html.H4(
+                                    f"{'{0:n}'.format(tots['deaths'])} ({round((tots['deaths'] / tots['confirmed']) * 100)}%)",
+                                    className="card-title"),
                                 html.H6("Deaths", className="card-subtitle")
                             ]
                         )
@@ -76,7 +81,7 @@ app.layout = html.Div(children=[
                         dbc.CardBody(
                             [
                                 html.H4(
-                                    f"{'{0:n}'.format(recovered_tot)} ({round((recovered_tot / confirmed_tot) * 100)}%)",
+                                    f"{'{0:n}'.format(tots['recovered'])} ({round((tots['recovered'] / tots['confirmed']) * 100)}%)",
                                     className="card-title"),
                                 html.H6("Recovered", className="card-subtitle")
                             ]
@@ -122,7 +127,8 @@ app.layout = html.Div(children=[
             ), className="col-md-12 row"
         ),
         html.Div([dcc.Graph(id='timeline-one-graph', figure=timeline_one.get_figure())], className="col-md-6"),
-        html.Div([dcc.Graph(id='forecast-graph', figure=forecast.get_figure())], className="col-md-6"),
+        html.Div([dcc.Graph(id='donut-one-graph', figure=timeline_one.get_figure())], className="col-md-6"),
+        html.Div([dcc.Graph(id='forecast-graph', figure=forecast.get_figure())], className="col-md-12 hidden"),
     ]
     ),
     html.Footer([

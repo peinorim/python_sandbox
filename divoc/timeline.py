@@ -27,10 +27,10 @@ class Timeline:
                 }
 
                 for day in self.data[res]:
-                    data['dates'].append(datetime.strptime(day['date'], '%Y-%m-%d'))
-                    data['confirmed'].append(day['confirmed'])
-                    data['deaths'].append(day['deaths'])
-                    data['recovered'].append(day['recovered'])
+                    data['dates'].append(datetime.strptime(day['date'], '%m/%d/%y'))
+                    data['confirmed'].append(day.get('confirmed', 0))
+                    data['deaths'].append(day.get('deaths', 0))
+                    data['recovered'].append(day.get('recovered', 0))
 
                 if self.countries is None or len(self.countries) > 1 or len(self.countries) == 0:
                     graph_title = self.type
@@ -40,7 +40,7 @@ class Timeline:
                         name=res,
                         opacity=0.8))
                 else:
-                    graph_title = self.countries[0]
+                    graph_title = f'{self.countries[0]} {self.type}'
                     fig.add_trace(go.Scatter(
                         x=data['dates'],
                         y=data['confirmed'],
