@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import pandas as pd
 
 
@@ -52,7 +50,7 @@ class Data:
 
             for i in range(4, len(df_recov.columns.values) + 1):
                 if i == len(line):
-                    val = int(line[i - 1]) if pd.notnull(line[i - 1]) else None
+                    val = int(line[i - 1]) if pd.notnull(line[i - 1]) else 0
                 else:
                     val = int(line[i]) if pd.notnull(line[i]) else None
                 if len(self.data[country]) > 0:
