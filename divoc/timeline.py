@@ -11,7 +11,7 @@ class Timeline:
     def __init__(self, data=None, countries=None, type=None):
 
         self.type = type
-        self.countries = countries
+        self.countries = countries if countries else list()
         self.data = data
 
     def get_figure(self):
@@ -26,13 +26,16 @@ class Timeline:
                     "recovered": []
                 }
 
-                for day in self.data[res]:
+                for index, day in enumerate(self.data[res]):
                     data['dates'].append(datetime.strptime(day['date'], '%m/%d/%y'))
-                    data['confirmed'].append(day.get('confirmed', 0))
-                    data['deaths'].append(day.get('deaths', 0))
-                    data['recovered'].append(day.get('recovered', 0))
+                    data['confirmed'].append(day.get('confirmed'))
+                    data['deaths'].append(day.get('deaths'))
+                    if day.get('recovered') is None:
+                        data['recovered'].append(self.data[res][index - 1].get('recovered'))
+                    else:
+                        data['recovered'].append(day.get('recovered'))
 
-                if self.countries is None or len(self.countries) > 1 or len(self.countries) == 0:
+                if len(self.countries) != 1:
                     graph_title = self.type
                     fig.add_trace(go.Scatter(
                         x=data['dates'],

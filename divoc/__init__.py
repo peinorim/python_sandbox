@@ -41,7 +41,7 @@ class Data:
                 self.data[country][i - 4].update({'deaths': val})
 
         df_recov = pd.read_csv(
-            'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv')
+            'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv')
 
         for index, line in enumerate(df_recov.values):
             country = line[1]
@@ -50,7 +50,12 @@ class Data:
             if country not in self.data:
                 self.data.update({country: []})
 
-            for i in range(4, len(df_recov.columns.values)):
-                val = int(line[i]) if pd.notnull(line[i]) else None
+            for i in range(4, len(df_recov.columns.values) + 1):
+                if i == len(line):
+                    val = int(line[i - 1]) if pd.notnull(line[i - 1]) else None
+                else:
+                    val = int(line[i]) if pd.notnull(line[i]) else None
                 if len(self.data[country]) > 0:
                     self.data[country][i - 4].update({'recovered': val})
+
+        self.data = dict(sorted(self.data.items()))

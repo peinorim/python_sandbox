@@ -19,7 +19,7 @@ class Map:
                     lat=[self.data[country][-1]['lat']],
                     text=f'{country} : {self.data[country][-1][self.type]} cases',
                     marker=dict(
-                        size=self.data[country][-1][self.type] / (self.tots[self.type] / 400),
+                        size=round(self.data[country][-1][self.type] / (self.tots[self.type] / 400), 0),
                         line_color='rgb(40,40,40)',
                         line_width=0.5,
                         sizemode='area'
