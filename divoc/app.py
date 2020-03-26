@@ -119,8 +119,8 @@ app.layout = html.Div(children=[
         ], className="col-md-12 row")
     ], className="row"),
     dbc.Row([
-        html.Div([dcc.Graph(id='timeline-all-graph', figure={})], className="col-md-6"),
-        html.Div([dcc.Graph(id='map-graph', figure={})], className="col-md-6"),
+        html.Div([dcc.Graph(id='timeline-all-graph', figure=timeline_all.get_figure())], className="col-md-6"),
+        html.Div([dcc.Graph(id='map-graph', figure=map.get_figure())], className="col-md-6"),
         html.Div(
             html.Div(
                 dcc.Dropdown(
@@ -133,9 +133,9 @@ app.layout = html.Div(children=[
                 ), className="col-md-3"
             ), className="col-md-12 row"
         ),
-        html.Div([dcc.Graph(id='timeline-one-graph', figure={})], className="col-md-6"),
-        html.Div([dcc.Graph(id='pie-one-graph', figure={})], className="col-md-6"),
-        html.Div([dcc.Graph(id='forecast-graph', figure={})], className=f"col-md-12 {hidden}"),
+        html.Div([dcc.Graph(id='timeline-one-graph', figure=timeline_one.get_figure())], className="col-md-6"),
+        html.Div([dcc.Graph(id='pie-one-graph', figure=pie.get_figure())], className="col-md-6"),
+        html.Div([dcc.Graph(id='forecast-graph', figure=forecast.get_figure())], className=f"col-md-12 {hidden}"),
     ]
     ),
     html.Footer([
