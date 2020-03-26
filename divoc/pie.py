@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import dash
 
 app = dash.Dash(__name__)
