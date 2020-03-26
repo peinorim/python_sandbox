@@ -1,8 +1,5 @@
 import os
 from math import inf
-
-from fbprophet import Prophet
-from fbprophet.plot import plot_plotly
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -28,6 +25,9 @@ class Forecast:
     def get_figure(self):
         if os.environ.get('FORECAST', "0") != "1":
             return {}
+        from fbprophet import Prophet
+        from fbprophet.plot import plot_plotly
+
         m = Prophet()
         m.fit(self.format_forecast())
         future = m.make_future_dataframe(periods=PERIODS)
