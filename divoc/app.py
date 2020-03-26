@@ -1,4 +1,5 @@
 import locale
+import os
 from datetime import datetime
 
 import dash
@@ -12,6 +13,7 @@ from dash.dependencies import Input, Output
 from divoc import Data
 from divoc.forecast import Forecast
 from divoc.map import Map
+from divoc.pie import Pie
 from divoc.timeline import Timeline
 
 external_stylesheets = [dbc.themes.BOOTSTRAP]
@@ -47,6 +49,11 @@ timeline_all = Timeline(data=data, countries=[], type="confirmed")
 timeline_one = Timeline(data=data, countries=["France"], type="confirmed")
 forecast = Forecast(data=data, country="France", type="confirmed")
 map = Map(data=data, type="confirmed", tots=tots)
+pie = Pie(data=data, country="France")
+
+hidden = ''
+if os.environ.get('FORECAST', "0") != "1":
+    hidden = 'hidden'
 
 app.layout = html.Div(children=[
     html.H1(f"COVID-19 Worldwide data", style={"textAlign": "center", "padding": "10px 0"}),
@@ -69,7 +76,7 @@ app.layout = html.Div(children=[
                         dbc.CardBody(
                             [
                                 html.H4(
-                                    f"{'{0:n}'.format(tots['deaths'])} ({round((tots['deaths'] / tots['confirmed']) * 100)}%)",
+                                    f"{'{0:n}'.format(tots['deaths'])} ({round((tots['deaths'] / tots['confirmed']) * 100, 1)}%)",
                                     className="card-title"),
                                 html.H6("Deaths", className="card-subtitle")
                             ]
@@ -81,7 +88,7 @@ app.layout = html.Div(children=[
                         dbc.CardBody(
                             [
                                 html.H4(
-                                    f"{'{0:n}'.format(tots['recovered'])} ({round((tots['recovered'] / tots['confirmed']) * 100)}%)",
+                                    f"{'{0:n}'.format(tots['recovered'])} ({round((tots['recovered'] / tots['confirmed']) * 100, 1)}%)",
                                     className="card-title"),
                                 html.H6("Recovered", className="card-subtitle")
                             ]
@@ -112,8 +119,8 @@ app.layout = html.Div(children=[
         ], className="col-md-12 row")
     ], className="row"),
     dbc.Row([
-        html.Div([dcc.Graph(id='timeline-all-graph', figure={})], className="col-md-6"),
-        html.Div([dcc.Graph(id='map-graph', figure={})], className="col-md-6"),
+        html.Div([dcc.Graph(id='timeline-all-graph', figure=timeline_all.get_figure())], className="col-md-6"),
+        html.Div([dcc.Graph(id='map-graph', figure=map.get_figure())], className="col-md-6"),
         html.Div(
             html.Div(
                 dcc.Dropdown(
@@ -126,8 +133,9 @@ app.layout = html.Div(children=[
                 ), className="col-md-3"
             ), className="col-md-12 row"
         ),
-        html.Div([dcc.Graph(id='timeline-one-graph', figure={})], className="col-md-6"),
-        html.Div([dcc.Graph(id='forecast-graph', figure={})], className="col-md-6"),
+        html.Div([dcc.Graph(id='timeline-one-graph', figure=timeline_one.get_figure())], className="col-md-6"),
+        html.Div([dcc.Graph(id='pie-one-graph', figure=pie.get_figure())], className="col-md-6"),
+        html.Div([dcc.Graph(id='forecast-graph', figure=forecast.get_figure())], className=f"col-md-12 {hidden}"),
     ]
     ),
     html.Footer([
@@ -155,7 +163,8 @@ def update_countries(countries, type):
 
 @app.callback([
     Output(component_id='timeline-one-graph', component_property='figure'),
-    Output(component_id='forecast-graph', component_property='figure')
+    Output(component_id='forecast-graph', component_property='figure'),
+    Output(component_id='pie-one-graph', component_property='figure'),
 ],
     [
         Input(component_id='country-dropdown', component_property='value'),
@@ -165,8 +174,9 @@ def update_countries(countries, type):
 def update_country(country, type):
     timeline_one = Timeline(data=data, countries=[country], type=type)
     forecast = Forecast(data=data, country=country, type=type)
+    pie = Pie(data=data, country=country)
 
-    return timeline_one.get_figure(), forecast.get_figure()
+    return timeline_one.get_figure(), forecast.get_figure(), pie.get_figure()
 
 
 if __name__ == '__main__':
