@@ -43,7 +43,7 @@ class Timeline:
                         name=res,
                         opacity=0.8))
                 else:
-                    graph_title = f'{self.countries[0]} {self.type}'
+                    graph_title = f'{self.countries[0]}'
                     fig.add_trace(go.Scatter(
                         x=data['dates'],
                         y=data['confirmed'],

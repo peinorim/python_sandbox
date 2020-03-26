@@ -3,7 +3,7 @@ from math import inf
 import pandas as pd
 import plotly.graph_objects as go
 
-PERIODS = 90
+PERIODS = 30
 
 
 class Forecast:
@@ -41,7 +41,7 @@ class Forecast:
         forecast_fig['layout']['height'] = 700
 
         forecast_fig.update_layout(
-            title=f"{self.country} {self.type} cases trend forecast for the next 90 days",
+            title=f"{self.country} {self.type} cases trend forecast for the next {PERIODS} days",
             xaxis=go.layout.XAxis(
                 tickformat="%Y-%m-%d",
                 rangeselector=dict(

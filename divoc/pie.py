@@ -24,8 +24,11 @@ class Pie:
         values.append(100 - recov - deat)
 
         fig.add_trace(
-            go.Pie(labels=labels, values=values, name="Recovered / deaths repartition")
+            go.Pie(labels=labels, values=values)
         )
         fig.update_traces(hole=.4, hoverinfo="label+percent+name")
         fig['layout']['height'] = 700
+        fig.update_layout(
+            title=f"{self.country} cases repartition"
+        )
         return fig
