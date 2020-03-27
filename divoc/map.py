@@ -30,14 +30,17 @@ class Map:
             paper_bgcolor="#222",
             plot_bgcolor="#222",
             font=dict(
-                color="#FFF"
+                color="#c9c9c9"
             ),
             title=f'World {self.type} cases map',
+            titlefont={"color": "#c9c9c9"},
             height=700,
             showlegend=False,
             geo=dict(
                 scope='world',
-                landcolor='rgb(217, 217, 217)',
+                landcolor='#c9c9c9',
+                lakecolor="#222",
+                bgcolor="#222"
             )
         )
 

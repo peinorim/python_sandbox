@@ -41,30 +41,15 @@ class Forecast:
         forecast_fig['layout']['height'] = 700
 
         forecast_fig.update_layout(
+            paper_bgcolor="#222",
+            plot_bgcolor="#222",
+            font=dict(
+                color="#c9c9c9"
+            ),
+            titlefont={"color": "#c9c9c9"},
             title=f"{self.country} {self.type} cases trend forecast for the next {PERIODS} days",
             xaxis=go.layout.XAxis(
                 tickformat="%Y-%m-%d",
-                rangeselector=dict(
-                    buttons=list([
-                        dict(count=1,
-                             label="1m",
-                             step="month",
-                             stepmode="backward"),
-                        dict(count=6,
-                             label="6m",
-                             step="month",
-                             stepmode="backward"),
-                        dict(count=1,
-                             label="YTD",
-                             step="year",
-                             stepmode="todate"),
-                        dict(count=1,
-                             label="1a",
-                             step="year",
-                             stepmode="backward"),
-                        dict(step="all", label="tout")
-                    ])
-                ),
                 rangeslider=dict(
                     visible=True
                 ),
