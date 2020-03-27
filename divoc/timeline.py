@@ -67,36 +67,19 @@ class Timeline:
         fig['layout']['height'] = 700
 
         fig.update_layout(
-            # paper_bgcolor="#2B3E50",
-            # plot_bgcolor="rgba(1.0, 1.0, 1.0, 0.1)",
+            paper_bgcolor="#222",
+            plot_bgcolor="#222",
             title=f"{graph_title} cases",
-            # titlefont={"color": "#FFF"},
+            titlefont={"color": "#c9c9c9"},
+            font=dict(
+                color="#c9c9c9"
+            ),
             xaxis=go.layout.XAxis(
-                # tickfont={"color": "#FFF"},
                 range=[datetime.strptime("2020-02-23", '%Y-%m-%d'), datetime.now()],
                 autorange=False,
                 tickformat="%Y-%m-%d",
-                rangeselector=dict(
-                    buttons=list([
-                        dict(count=1,
-                             label="1m",
-                             step="month",
-                             stepmode="backward"),
-                        dict(count=6,
-                             label="6m",
-                             step="month",
-                             stepmode="backward"),
-                        dict(count=1,
-                             label="YTD",
-                             step="year",
-                             stepmode="todate"),
-                        dict(count=1,
-                             label="1a",
-                             step="year",
-                             stepmode="backward"),
-                        dict(step="all", label="tout")
-                    ])
-                ),
+                gridcolor="#6F6F6F",
+                linecolor='#6F6F6F',
                 rangeslider=dict(
                     visible=True
                 ),
@@ -104,7 +87,9 @@ class Timeline:
             ),
             yaxis=dict(
                 showgrid=True,
-                # tickfont={"color": "#FFF"},
+                gridcolor="#6F6F6F",
+                tickfont={"color": "#c9c9c9"},
+                linecolor='#6F6F6F'
             ),
         )
         return fig

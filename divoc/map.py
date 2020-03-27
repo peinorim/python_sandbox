@@ -27,6 +27,11 @@ class Map:
                     name=country
                 ))
         fig.update_layout(
+            paper_bgcolor="#222",
+            plot_bgcolor="#222",
+            font=dict(
+                color="#FFF"
+            ),
             title=f'World {self.type} cases map',
             height=700,
             showlegend=False,

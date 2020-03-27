@@ -16,7 +16,7 @@ from divoc.map import Map
 from divoc.pie import Pie
 from divoc.timeline import Timeline
 
-external_stylesheets = [dbc.themes.BOOTSTRAP]
+external_stylesheets = [dbc.themes.DARKLY]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, assets_external_path='assets')
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 

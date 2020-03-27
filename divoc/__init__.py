@@ -48,11 +48,11 @@ class Data:
             if country not in self.data:
                 self.data.update({country: []})
 
-            for i in range(4, len(df_recov.columns.values) + 1):
+            for i in range(4, len(df_recov.columns.values)):
                 if i == len(line):
                     val = int(line[i - 1]) if pd.notnull(line[i - 1]) else 0
                 else:
-                    val = int(line[i]) if pd.notnull(line[i]) else None
+                    val = int(line[i]) if pd.notnull(line[i]) else 0
                 if len(self.data[country]) > 0:
                     self.data[country][i - 4].update({'recovered': val})
 

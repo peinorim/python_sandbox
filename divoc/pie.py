@@ -29,6 +29,11 @@ class Pie:
         fig.update_traces(hole=.4, hoverinfo="label+percent+name")
         fig['layout']['height'] = 700
         fig.update_layout(
-            title=f"{self.country} cases repartition"
+            title=f"{self.country} cases repartition",
+            paper_bgcolor="#222",
+            plot_bgcolor="#222",
+            font=dict(
+                color="#FFF"
+            ),
         )
         return fig
