@@ -47,6 +47,7 @@ for country in data:
 
 timeline_all = Timeline(data=data, countries=[], type="confirmed")
 timeline_one = Timeline(data=data, countries=["France"], type="confirmed")
+timeline_dayone = Timeline(data=data, countries=[], type="confirmed", dayone_mode=True)
 forecast = Forecast(data=data, country="France", type="confirmed")
 map = Map(data=data, type="confirmed", tots=tots)
 pie = Pie(data=data, country="France")
@@ -121,6 +122,7 @@ app.layout = html.Div(children=[
     dbc.Row([
         html.Div([dcc.Graph(id='timeline-all-graph', figure=timeline_all.get_figure())], className="col-md-6"),
         html.Div([dcc.Graph(id='map-graph', figure=map.get_figure())], className="col-md-6"),
+        html.Div([dcc.Graph(id='timeline-dayone-graph', figure=timeline_dayone.get_figure())], className="col-md-12"),
         html.Div(
             html.Div(
                 dcc.Dropdown(
@@ -147,7 +149,8 @@ app.layout = html.Div(children=[
 
 @app.callback([
     Output(component_id='timeline-all-graph', component_property='figure'),
-    Output(component_id='map-graph', component_property='figure')
+    Output(component_id='map-graph', component_property='figure'),
+    Output(component_id='timeline-dayone-graph', component_property='figure'),
 ],
     [
         Input(component_id='countries-dropdown', component_property='value'),
@@ -157,8 +160,9 @@ app.layout = html.Div(children=[
 def update_countries(countries, type):
     timeline_all = Timeline(data=data, countries=countries, type=type)
     map = Map(data=data, type=type, tots=tots)
+    timeline_dayone = Timeline(data=data, countries=countries, type=type, dayone_mode=True)
 
-    return timeline_all.get_figure(), map.get_figure()
+    return timeline_all.get_figure(), map.get_figure(), timeline_dayone.get_figure()
 
 
 @app.callback([
