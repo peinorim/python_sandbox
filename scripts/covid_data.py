@@ -61,7 +61,7 @@ class Data:
 
         self.data = dict(sorted(self.data.items()))
 
-        with open("../data/covid-19/data.json", 'w') as json_file:
+        with open("data/covid-19/data.json", 'w') as json_file:
             json_file.write(json.dumps(self.data))
 
 
