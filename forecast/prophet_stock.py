@@ -1,7 +1,4 @@
-import os
 from datetime import datetime
-
-import redis
 import yfinance as yf
 import dash
 import dash_html_components as html
@@ -11,40 +8,17 @@ from fbprophet.plot import plot_plotly
 from math import inf
 import pandas as pd
 import plotly.graph_objects as go
-from flask_caching import Cache
+
+from forecast import RedisCache
 
 app = dash.Dash(__name__)
 
 STOCK = "ACA.PA"
 START_DATE = "2018-03-25"
-PERIODS = 200
+PERIODS = 30
 TIMEOUT_STANDARD = 3600 * 8
 
-
-def get_cache():
-    try:
-        rs = redis.StrictRedis(
-            host=os.environ.get('REDIS_HOST', '127.0.0.1'),
-            port=os.environ.get('REDIS_PORT', '6379'),
-            db=os.environ.get('REDIS_DB', '0'),
-            password=os.environ.get('REDIS_PASSWORD', '')
-        )
-        rs.ping()
-        return Cache(app.server, config={
-            'CACHE_TYPE': 'redis',
-            'CACHE_REDIS_HOST': os.environ.get('REDIS_HOST', '127.0.0.1'),
-            'CACHE_REDIS_PORT': os.environ.get('REDIS_PORT', '6379'),
-            'CACHE_REDIS_DB': os.environ.get('REDIS_DB', '0'),
-            'CACHE_REDIS_PASSWORD': os.environ.get('REDIS_PASSWORD', '')
-        })
-    except ConnectionError:
-        return Cache(app.server, config={
-            'CACHE_TYPE': 'filesystem',
-            'CACHE_DIR': 'cache-directory'
-        })
-
-
-cache = get_cache()
+cache = RedisCache(app=app).get_cache()
 
 
 @cache.memoize(timeout=TIMEOUT_STANDARD)
