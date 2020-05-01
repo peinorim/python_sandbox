@@ -14,8 +14,8 @@ from forecast import RedisCache
 app = dash.Dash(__name__)
 
 STOCK = "ACA.PA"
-START_DATE = "2018-03-25"
-PERIODS = 30
+START_DATE = "2016-03-25"
+PERIODS = 200
 TIMEOUT_STANDARD = 3600 * 8
 
 cache = RedisCache(app=app).get_cache()
@@ -32,10 +32,10 @@ def format_forecast(start_date=None):
 
 
 @cache.memoize(timeout=TIMEOUT_STANDARD)
-def forecast_figure():
+def forecast_figure(start_date=None, periods=None):
     m = Prophet()
-    m.fit(format_forecast(start_date=START_DATE))
-    future = m.make_future_dataframe(periods=PERIODS)
+    m.fit(format_forecast(start_date=start_date))
+    future = m.make_future_dataframe(periods=periods)
     forecast = m.predict(future)
 
     forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=True, changepoints=True)
@@ -79,7 +79,7 @@ def forecast_figure():
 
 app.layout = html.Div(children=[
     html.H1(children=f'{STOCK} forecast for the next {PERIODS} days'),
-    dcc.Graph(id='forecast-graph', figure=forecast_figure())
+    dcc.Graph(id='forecast-graph', figure=forecast_figure(start_date=START_DATE, periods=PERIODS))
 ])
 
 if __name__ == '__main__':
