@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 import pandas as pd
 
@@ -22,9 +23,10 @@ class Data:
             self.data.update({country: []})
 
             for i in range(4, len(df_conf.columns.values)):
-                col = df_conf.columns.values[i]
+
+                date = datetime.strptime(df_conf.columns.values[i], '%m/%d/%y')
                 val = int(line[i])
-                self.data[country].append({'date': col, 'confirmed': val, 'lat': lat, 'long': long})
+                self.data[country].append({'date': date.strftime("%Y-%m-%d"), 'confirmed': val, 'lat': lat, 'long': long})
 
         df_deat = pd.read_csv(
             'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
