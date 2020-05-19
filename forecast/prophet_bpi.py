@@ -21,7 +21,7 @@ cache = RedisCache(app=app).get_cache()
 
 
 @cache.memoize(timeout=TIMEOUT_STANDARD)
-def format_forecast(start_date=None):
+def format_bpi_forecast(start_date=None):
     forecast = {'ds': [], 'y': []}
     PARAMS = {'start': start_date, 'end': datetime.now().strftime("%Y-%m-%d")}
     r = requests.get(url="http://api.coindesk.com/v1/bpi/historical/close.json", params=PARAMS)
@@ -32,8 +32,9 @@ def format_forecast(start_date=None):
     return {'forecast': forecast}
 
 
-def forecast_figure(start_date=None, periods=None):
-    forecast = format_forecast(start_date=start_date)
+@cache.memoize(timeout=TIMEOUT_STANDARD)
+def forecast_bpi_figure(start_date=None, periods=None):
+    forecast = format_bpi_forecast(start_date=start_date)
     df = pd.DataFrame.from_dict(forecast['forecast'])
 
     m = Prophet()
@@ -83,7 +84,7 @@ def forecast_figure(start_date=None, periods=None):
 
 app.layout = html.Div(children=[
     html.H1(children='BPI forecast'),
-    dcc.Graph(id='forecast-graph', figure=forecast_figure(start_date=START_DATE, periods=PERIODS))
+    dcc.Graph(id='forecast-graph', figure=forecast_bpi_figure(start_date=START_DATE, periods=PERIODS))
 ])
 
 if __name__ == '__main__':

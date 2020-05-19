@@ -14,7 +14,7 @@ from forecast import RedisCache
 app = dash.Dash(__name__)
 
 STOCK = "ACA.PA"
-START_DATE = "2016-03-25"
+START_DATE = "2017-03-25"
 PERIODS = 200
 TIMEOUT_STANDARD = 3600 * 8
 
