@@ -22,9 +22,9 @@ cache = RedisCache(app=app).get_cache()
 
 
 @cache.memoize(timeout=TIMEOUT_STANDARD)
-def format_forecast(start_date=None):
+def format_forecast(stock=None, start_date=None):
     forecast = {'ds': [], 'y': []}
-    df = yf.download(STOCK, start=start_date, end=datetime.now().strftime("%Y-%m-%d"))
+    df = yf.download(stock, start=start_date, end=datetime.now().strftime("%Y-%m-%d"))
 
     forecast['ds'] = df.index.tolist()
     forecast['y'] = df.Close.tolist()
@@ -32,9 +32,9 @@ def format_forecast(start_date=None):
 
 
 @cache.memoize(timeout=TIMEOUT_STANDARD)
-def forecast_figure(start_date=None, periods=None):
+def forecast_figure(stock=None, start_date=None, periods=None):
     m = Prophet()
-    m.fit(format_forecast(start_date=start_date))
+    m.fit(format_forecast(stock=stock, start_date=start_date))
     future = m.make_future_dataframe(periods=periods)
     forecast = m.predict(future)
 
@@ -79,7 +79,7 @@ def forecast_figure(start_date=None, periods=None):
 
 app.layout = html.Div(children=[
     html.H1(children=f'{STOCK} forecast for the next {PERIODS} days'),
-    dcc.Graph(id='forecast-graph', figure=forecast_figure(start_date=START_DATE, periods=PERIODS))
+    dcc.Graph(id='forecast-graph', figure=forecast_figure(stock=STOCK, start_date=START_DATE, periods=PERIODS))
 ])
 
 if __name__ == '__main__':
