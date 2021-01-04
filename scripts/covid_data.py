@@ -23,10 +23,10 @@ class Data:
             self.data.update({country: []})
 
             for i in range(4, len(df_conf.columns.values)):
-
                 date = datetime.strptime(df_conf.columns.values[i], '%m/%d/%y')
                 val = int(line[i])
-                self.data[country].append({'date': date.strftime("%Y-%m-%d"), 'confirmed': val, 'lat': lat, 'long': long})
+                self.data[country].append(
+                    {'date': date.strftime("%Y-%m-%d"), 'confirmed': val, 'lat': lat, 'long': long})
 
         df_deat = pd.read_csv(
             'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
@@ -62,8 +62,9 @@ class Data:
 
         self.data = dict(sorted(self.data.items()))
 
-        with open("data/covid-19/data.json", 'w') as json_file:
+        with open("/home/arnaud/PycharmProjects/python_sandbox/data/covid-19/data.json", 'w') as json_file:
             json_file.write(json.dumps(self.data))
 
 
-Data().init_data()
+if __name__ == '__main__':
+    Data().init_data()
