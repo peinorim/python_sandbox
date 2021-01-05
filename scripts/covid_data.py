@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime
 
 import pandas as pd
@@ -62,7 +63,7 @@ class Data:
 
         self.data = dict(sorted(self.data.items()))
 
-        with open("/home/arnaud/PycharmProjects/python_sandbox/data/covid-19/data.json", 'w') as json_file:
+        with open(f"{os.getcwd()}/data/covid-19/data.json", 'w') as json_file:
             json_file.write(json.dumps(self.data))
 
 
