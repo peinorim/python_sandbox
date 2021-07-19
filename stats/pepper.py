@@ -15,6 +15,7 @@ class Pepper:
 class PepperPot:
     blue_peppers = []
     red_peppers = []
+    now = datetime.now()
 
     def __init__(self):
         self.__get_blue_data()
@@ -40,27 +41,25 @@ class PepperPot:
             csvfile.close()
 
     def __generate_heat(self):
+
         if self.blue_peppers:
-            now = datetime.now()
             for pepper in self.blue_peppers:
-                last_picked = (now - pepper.last_sorted_date).days
+                last_picked = (self.now - pepper.last_sorted_date).days
                 pepper.heat = round(pepper.occurence * last_picked, 2)
         if self.red_peppers:
-            now = datetime.now()
             for pepper in self.red_peppers:
-                last_picked = (now - pepper.last_sorted_date).days
+                last_picked = (self.now - pepper.last_sorted_date).days
                 pepper.heat = round(pepper.occurence * last_picked, 2)
         self.__sort_by_heat()
 
     def open(self):
-        now = datetime.now()
-        print(f"Let's open our pepper pot on {now:%Y-%m-%d}.")
+        print(f"Let's open our pepper pot on {self.now:%Y-%m-%d}.")
 
         if self.blue_peppers:
             print("-------------------- BLUE FIRST --------------------")
             for pepper in self.blue_peppers:
                 print(
-                    f"Number {pepper.num} heat is {pepper.heat} ({(now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
+                    f"Number {pepper.num} heat is {pepper.heat} ({(self.now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
                 )
             print("----------------------------------------------------")
             print("----------------------------------------------------")
@@ -69,7 +68,7 @@ class PepperPot:
             print("-------------------- RED THEN --------------------")
             for pepper in self.red_peppers:
                 print(
-                    f"Number {pepper.num} heat is {pepper.heat} ({(now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
+                    f"Number {pepper.num} heat is {pepper.heat} ({(self.now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
                 )
             print("----------------------------------------------------")
             print("----------------------------------------------------")
