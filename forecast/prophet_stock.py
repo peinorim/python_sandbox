@@ -14,7 +14,7 @@ from forecast import RedisCache
 app = dash.Dash(__name__)
 
 STOCK = "ACA.PA"
-START_DATE = "2017-03-25"
+START_DATE = "2018-03-25"
 PERIODS = 200
 TIMEOUT_STANDARD = 3600 * 8
 
@@ -38,7 +38,7 @@ def forecast_figure(stock=None, start_date=None, periods=None):
     future = m.make_future_dataframe(periods=periods)
     forecast = m.predict(future)
 
-    forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=True, changepoints=True)
+    forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=False, changepoints=True)
 
     forecast_fig['layout']['showlegend'] = True
     forecast_fig['layout']['width'] = inf
