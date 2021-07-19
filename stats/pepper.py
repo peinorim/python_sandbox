@@ -18,6 +18,8 @@ class PepperPot:
 
     def __init__(self):
         self.__get_blue_data()
+        self.__get_red_data()
+        self.__generate_heat()
 
     def __get_blue_data(self):
         with open('blue.csv', newline='') as csvfile:
@@ -27,7 +29,15 @@ class PepperPot:
                     Pepper(num=row[0], nb_picked=row[1], occurence=row[2], last_sorted_date=row[3])
                 )
             csvfile.close()
-        self.__generate_heat()
+
+    def __get_red_data(self):
+        with open('red.csv', newline='') as csvfile:
+            datareader = csv.reader(csvfile, delimiter=';', quotechar='|')
+            for row in datareader:
+                self.red_peppers.append(
+                    Pepper(num=row[0], nb_picked=row[1], occurence=row[2], last_sorted_date=row[3])
+                )
+            csvfile.close()
 
     def __generate_heat(self):
         if self.blue_peppers:
@@ -35,8 +45,12 @@ class PepperPot:
             for pepper in self.blue_peppers:
                 last_picked = (now - pepper.last_sorted_date).days
                 pepper.heat = round(pepper.occurence * last_picked, 2)
-
-            self.__sort_by_heat()
+        if self.red_peppers:
+            now = datetime.now()
+            for pepper in self.red_peppers:
+                last_picked = (now - pepper.last_sorted_date).days
+                pepper.heat = round(pepper.occurence * last_picked, 2)
+        self.__sort_by_heat()
 
     def open(self):
         now = datetime.now()
@@ -46,15 +60,16 @@ class PepperPot:
             print("-------------------- BLUE FIRST --------------------")
             for pepper in self.blue_peppers:
                 print(
-                    f"{pepper.num} heat is {pepper.heat} ({(now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
+                    f"Number {pepper.num} heat is {pepper.heat} ({(now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
                 )
             print("----------------------------------------------------")
             print("----------------------------------------------------")
+
         if self.red_peppers:
             print("-------------------- RED THEN --------------------")
             for pepper in self.red_peppers:
                 print(
-                    f"{pepper.num} heat is {pepper.heat} ({(now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
+                    f"Number {pepper.num} heat is {pepper.heat} ({(now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
                 )
             print("----------------------------------------------------")
             print("----------------------------------------------------")
@@ -63,6 +78,7 @@ class PepperPot:
 
     def __sort_by_heat(self):
         self.blue_peppers.sort(key=lambda x: x.heat, reverse=False)
+        self.red_peppers.sort(key=lambda x: x.heat, reverse=False)
 
 
 if __name__ == '__main__':
