@@ -56,11 +56,11 @@ class PepperPot:
         print(f"Let's open our pepper pot on {self.now:%Y-%m-%d}.")
 
         if self.blue_peppers:
-            print("-------------------- BLUE FIRST --------------------")
+            print("---------------------- BLUE FIRST ----------------------")
             self.__display_list(peppers=self.blue_peppers)
 
         if self.red_peppers:
-            print("-------------------- RED THEN ----------------------")
+            print("---------------------- RED THEN ------------------------")
             self.__display_list(peppers=self.red_peppers)
 
         print("End of pepper pot opening")
@@ -70,8 +70,8 @@ class PepperPot:
             print(
                 f"Number {pepper.num} heat is {pepper.heat} ({(self.now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
             )
-        print("----------------------------------------------------")
-        print("----------------------------------------------------")
+        print("--------------------------------------------------------")
+        print("--------------------------------------------------------")
 
     def __sort_by_heat(self):
         self.blue_peppers.sort(key=lambda x: x.heat, reverse=False)
