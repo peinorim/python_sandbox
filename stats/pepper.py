@@ -68,7 +68,7 @@ class PepperPot:
     def __display_list(self, peppers=None):
         for pepper in peppers:
             print(
-                f"Number {pepper.num} heat is {pepper.heat} ({(self.now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
+                f"Pepper {pepper.num} heat is {pepper.heat} ({(self.now - pepper.last_sorted_date).days} days not seen, {pepper.occurence}% occured)."
             )
         print("--------------------------------------------------------")
         print("--------------------------------------------------------")
