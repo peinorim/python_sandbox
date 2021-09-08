@@ -37,7 +37,7 @@ class History:
                         pick: {
                             'nb_out': 1,
                             'out_percents': [round((1 / index) * 100, 2)],
-                            'out_dates': [draw.date.strftime("%m/%d/%Y")]
+                            'out_dates': [draw.date.strftime("%d/%m/%Y")]
                         }
                     })
                 else:
@@ -50,7 +50,7 @@ class History:
                     draw.luck: {
                         'nb_out': 1,
                         'out_percents': [round((1 / index) * 100, 2)],
-                        'out_dates': [draw.date.strftime("%m/%d/%Y")]
+                        'out_dates': [draw.date.strftime("%d/%m/%Y")]
                     }
                 })
             else:
