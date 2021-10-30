@@ -1,44 +1,53 @@
-from datetime import datetime
-import yfinance as yf
+import os
+from math import inf
 import dash
 from dash import html
 from dash import dcc
 from fbprophet import Prophet
 from fbprophet.plot import plot_plotly
-from math import inf
-import pandas as pd
 import plotly.graph_objects as go
+import pandas as pd
+import csv
+from datetime import datetime
 
 from forecast import RedisCache
 
 app = dash.Dash(__name__)
 
-STOCK = "ACA.PA"
-START_DATE = "2018-03-25"
-PERIODS = 200
-TIMEOUT_STANDARD = 3600 * 8
+START_DATE = datetime.strptime("2019-03-25", "%Y-%m-%d")
+PERIODS = 300
+TIMEOUT_STANDARD = 30
 
 cache = RedisCache(app=app).get_cache()
 
 
-@cache.memoize(timeout=TIMEOUT_STANDARD)
-def format_forecast(stock=None, start_date=None):
+def format_ada_forecast(start_date=None):
     forecast = {'ds': [], 'y': []}
-    df = yf.download(stock, start=start_date, end=datetime.now().strftime("%Y-%m-%d"))
+    # https://production.api.coindesk.com/v2/price/values/ADA?start_date=2018-05-30T22:00&end_date=2021-08-31T20:30&ohlc=true
+    with open(f'{os.getcwd()}/shib.csv', newline='') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        for row in spamreader:
+            date = datetime.strptime(row[0], "%Y-%m-%d")
+            value = float(row[1])
 
-    forecast['ds'] = df.index.tolist()
-    forecast['y'] = df.Close.tolist()
-    return pd.DataFrame.from_dict(forecast)
+            if date >= start_date and isinstance(value, float):
+                forecast['ds'].append(date)
+                forecast['y'].append(value)
+
+    return {'forecast': forecast}
 
 
-@cache.memoize(timeout=TIMEOUT_STANDARD)
-def forecast_figure(stock=None, start_date=None, periods=None):
+def forecast_ada_figure(start_date=None, periods=None):
+    forecast = format_ada_forecast(start_date=start_date)
+    df = pd.DataFrame.from_dict(forecast['forecast'])
+
     m = Prophet()
-    m.fit(format_forecast(stock=stock, start_date=start_date))
+    m.fit(df)
     future = m.make_future_dataframe(periods=periods)
     forecast = m.predict(future)
 
-    forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=False, changepoints=True)
+    forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=True, changepoints=True,
+                               changepoints_threshold=0.01)
 
     forecast_fig['layout']['showlegend'] = True
     forecast_fig['layout']['width'] = inf
@@ -78,8 +87,8 @@ def forecast_figure(stock=None, start_date=None, periods=None):
 
 
 app.layout = html.Div(children=[
-    html.H1(children=f'{STOCK} forecast for the next {PERIODS} days'),
-    dcc.Graph(id='forecast-graph', figure=forecast_figure(stock=STOCK, start_date=START_DATE, periods=PERIODS))
+    html.H1(children='SHIB forecast'),
+    dcc.Graph(id='forecast-graph', figure=forecast_ada_figure(start_date=START_DATE, periods=PERIODS))
 ])
 
 if __name__ == '__main__':

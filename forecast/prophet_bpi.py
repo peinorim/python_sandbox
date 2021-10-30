@@ -1,7 +1,7 @@
 from math import inf
 import dash
-import dash_html_components as html
-import dash_core_components as dcc
+from dash import html
+from dash import dcc
 from fbprophet import Prophet
 from fbprophet.plot import plot_plotly
 import plotly.graph_objects as go
