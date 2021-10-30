@@ -30,33 +30,34 @@ class History:
 
     def __set_stats(self, draw=None, index=None):
         if draw and draw.date and draw.picked and draw.luck:
-            print("")
-            for pick in draw.picked:
-                if not self.blue_stats.get(pick):
+            for number in range(1, 50):
+                if not self.blue_stats.get(number):
                     self.blue_stats.update({
-                        pick: {
-                            'nb_out': 1,
-                            'out_percents': [round((1 / index) * 100, 2)],
-                            'out_dates': [draw.date.strftime("%d/%m/%Y")]
+                        number: {
+                            'nb_out': 0,
+                            'out_percents': [],
+                            'out_dates': []
                         }
                     })
-                else:
-                    self.blue_stats[pick]['nb_out'] += 1
-                    self.blue_stats[pick]['out_percents'].append(round((self.blue_stats[pick]['nb_out'] / index) * 100, 2))
-                    self.blue_stats[pick]['out_dates'].append(draw.date.strftime("%m/%d/%Y"))
+                if number in draw.picked:
+                    self.blue_stats[number]['nb_out'] += 1
+                    self.blue_stats[number]['out_dates'].append(draw.date.strftime("%d/%m/%Y"))
 
-            if not self.red_stats.get(draw.luck):
-                self.red_stats.update({
-                    draw.luck: {
-                        'nb_out': 1,
-                        'out_percents': [round((1 / index) * 100, 2)],
-                        'out_dates': [draw.date.strftime("%d/%m/%Y")]
-                    }
-                })
-            else:
-                self.red_stats[draw.luck]['nb_out'] += 1
-                self.red_stats[draw.luck]['out_percents'].append(round((self.red_stats[draw.luck]['nb_out'] / index) * 100, 2))
-                self.red_stats[draw.luck]['out_dates'].append(draw.date.strftime("%m/%d/%Y"))
+                self.blue_stats[number]['out_percents'].append(round((self.blue_stats[number]['nb_out'] / index) * 100, 2))
+
+            for number in range(1, 11):
+                if not self.red_stats.get(number):
+                    self.red_stats.update({
+                        number: {
+                            'nb_out': 0,
+                            'out_percents': [],
+                            'out_dates': []
+                        }
+                    })
+                if number == draw.luck:
+                    self.red_stats[number]['nb_out'] += 1
+                    self.red_stats[number]['out_dates'].append(draw.date.strftime("%d/%m/%Y"))
+                self.red_stats[number]['out_percents'].append(round((self.red_stats[number]['nb_out'] / index) * 100, 2))
 
             self.blue_stats = dict(sorted(self.blue_stats.items()))
             self.red_stats = dict(sorted(self.red_stats.items()))
