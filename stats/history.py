@@ -1,5 +1,16 @@
 import csv
 from datetime import datetime
+import dash
+from dash import html
+from dash import dcc
+from fbprophet import Prophet
+from fbprophet.plot import plot_plotly
+from math import inf
+import pandas as pd
+import plotly.graph_objects as go
+
+app = dash.Dash(__name__)
+PERIODS = 20
 
 
 class Draw:
@@ -14,14 +25,17 @@ class History:
     draws = []
     blue_stats = {}
     red_stats = {}
+    all_dates = []
 
     def __init__(self):
         with open('history.csv', newline='') as csvfile:
             datareader = csv.reader(csvfile, delimiter=';', quotechar='|')
             for index, row in enumerate(datareader):
                 try:
-                    draw = Draw(date=datetime.strptime(row[2], '%d/%m/%Y'), one=int(row[4]), two=int(row[5]), three=int(row[6]), four=int(row[7]), five=int(row[8]), luck=int(row[9]))
+                    draw = Draw(date=datetime.strptime(row[2], '%d/%m/%Y'), one=int(row[4]), two=int(row[5]),
+                                three=int(row[6]), four=int(row[7]), five=int(row[8]), luck=int(row[9]))
                     self.draws.append(draw)
+                    self.all_dates.append(datetime.strptime(row[2], '%d/%m/%Y'))
                     self.__set_stats(draw=draw, index=index)
                 except ValueError:
                     pass
@@ -41,9 +55,10 @@ class History:
                     })
                 if number in draw.picked:
                     self.blue_stats[number]['nb_out'] += 1
-                    self.blue_stats[number]['out_dates'].append(draw.date.strftime("%d/%m/%Y"))
+                    self.blue_stats[number]['out_dates'].append(draw.date)
 
-                self.blue_stats[number]['out_percents'].append(round((self.blue_stats[number]['nb_out'] / index) * 100, 2))
+                self.blue_stats[number]['out_percents'].append(
+                    round((self.blue_stats[number]['nb_out'] / index) * 100, 2))
 
             for number in range(1, 11):
                 if not self.red_stats.get(number):
@@ -56,12 +71,72 @@ class History:
                     })
                 if number == draw.luck:
                     self.red_stats[number]['nb_out'] += 1
-                    self.red_stats[number]['out_dates'].append(draw.date.strftime("%d/%m/%Y"))
-                self.red_stats[number]['out_percents'].append(round((self.red_stats[number]['nb_out'] / index) * 100, 2))
+                    self.red_stats[number]['out_dates'].append(draw.date)
+                self.red_stats[number]['out_percents'].append(
+                    round((self.red_stats[number]['nb_out'] / index) * 100, 2))
 
             self.blue_stats = dict(sorted(self.blue_stats.items()))
             self.red_stats = dict(sorted(self.red_stats.items()))
 
 
+def format_forecast(history=None):
+    forecast = {
+        'ds': history.all_dates,
+        'y': history.blue_stats.get(11).get('out_percents')
+    }
+
+    return pd.DataFrame.from_dict(forecast)
+
+
+def forecast_figure(history=None):
+    m = Prophet()
+    m.fit(format_forecast(history=history))
+    future = m.make_future_dataframe(periods=PERIODS)
+    forecast = m.predict(future)
+
+    forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=False, changepoints=True)
+
+    forecast_fig['layout']['showlegend'] = True
+    forecast_fig['layout']['width'] = inf
+
+    forecast_fig.update_layout(
+        xaxis=go.layout.XAxis(
+            tickformat="%d/%m/%Y",
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1,
+                         label="1m",
+                         step="month",
+                         stepmode="backward"),
+                    dict(count=6,
+                         label="6m",
+                         step="month",
+                         stepmode="backward"),
+                    dict(count=1,
+                         label="YTD",
+                         step="year",
+                         stepmode="todate"),
+                    dict(count=1,
+                         label="1y",
+                         step="year",
+                         stepmode="backward"),
+                    dict(step="all", label="tout")
+                ])
+            ),
+            rangeslider=dict(
+                visible=True
+            ),
+            type="date"
+        ),
+        yaxis=dict(showgrid=True),
+    )
+    return forecast_fig
+
+
+app.layout = html.Div(children=[
+    html.H1(children=f'forecast'),
+    dcc.Graph(id='forecast-graph', figure=forecast_figure(history=History()))
+])
+
 if __name__ == '__main__':
-    History()
+    app.run_server(debug=True)
