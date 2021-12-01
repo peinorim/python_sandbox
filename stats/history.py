@@ -90,7 +90,7 @@ class Draw:
     def __init__(self, date=None, one=None, two=None, three=None, four=None, five=None, luck=None):
         self.date = date
         self.picked = sorted([one, two, three, four, five])
-        self.luck = luck
+        self.luck = sorted(luck) if isinstance(luck, list) else luck
         self.result = f'{"-".join(map(str, self.picked))}+{self.luck}'
 
 
@@ -100,13 +100,35 @@ class History:
     red_stats = {}
     all_dates = []
 
-    def __init__(self):
-        with open('history.csv', newline='') as csvfile:
+    def __init__(self, eu=False):
+        file_name = 'history.csv'
+        if eu:
+            file_name = 'eu_history.csv'
+        with open(file_name, newline='') as csvfile:
             datareader = csv.reader(csvfile, delimiter=';', quotechar='|')
             for index, row in enumerate(datareader):
                 try:
-                    draw = Draw(date=datetime.strptime(row[2], '%d/%m/%Y'), one=int(row[4]), two=int(row[5]),
-                                three=int(row[6]), four=int(row[7]), five=int(row[8]), luck=int(row[9]))
+                    if eu:
+                        draw = Draw(
+                            date=datetime.strptime(row[2], '%d/%m/%Y'),
+                            one=int(row[5]),
+                            two=int(row[6]),
+                            three=int(row[7]),
+                            four=int(row[8]),
+                            five=int(row[9]),
+                            luck=[row[10], row[11]]
+                        )
+                    else:
+                        draw = Draw(
+                            date=datetime.strptime(row[2], '%d/%m/%Y'),
+                            one=int(row[4]),
+                            two=int(row[5]),
+                            three=int(row[6]),
+                            four=int(row[7]),
+                            five=int(row[8]),
+                            luck=int(row[9])
+                        )
+
                     self.draws.append(draw)
                     self.all_dates.append(datetime.strptime(row[2], '%d/%m/%Y'))
                     self.__set_stats(draw=draw, index=index)
@@ -160,7 +182,7 @@ class History:
 
 
 if __name__ == '__main__':
-    history = History()
+    history = History(eu=True)
 
     if os.name != 'nt':
         blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)
