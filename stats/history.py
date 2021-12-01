@@ -12,6 +12,80 @@ app = dash.Dash(__name__)
 PERIODS = 20
 
 
+class Forecast:
+
+    def format_forecast(self, dates=None, percents=None):
+        forecast = {
+            'ds': dates,
+            'y': percents
+        }
+
+        return pd.DataFrame.from_dict(forecast)
+
+    def forecast_figure(self, dates=None, percents=None, title=None):
+        from fbprophet import Prophet
+        from fbprophet.plot import plot_plotly
+        m = Prophet()
+        m.fit(self.format_forecast(dates=dates, percents=percents))
+        future = m.make_future_dataframe(periods=PERIODS)
+        forecast = m.predict(future)
+
+        forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=False, changepoints=True)
+
+        forecast_fig['layout']['showlegend'] = True
+        forecast_fig['layout']['width'] = inf
+        forecast_fig['layout'].title.text = title
+
+        forecast_fig.update_layout(
+            xaxis=go.layout.XAxis(
+                tickformat="%d/%m/%Y",
+                rangeselector=dict(
+                    buttons=list([
+                        dict(count=1,
+                             label="1m",
+                             step="month",
+                             stepmode="backward"),
+                        dict(count=6,
+                             label="6m",
+                             step="month",
+                             stepmode="backward"),
+                        dict(count=1,
+                             label="YTD",
+                             step="year",
+                             stepmode="todate"),
+                        dict(count=1,
+                             label="1y",
+                             step="year",
+                             stepmode="backward"),
+                        dict(step="all", label="tout")
+                    ])
+                ),
+                rangeslider=dict(
+                    visible=True
+                ),
+                type="date"
+            ),
+            yaxis=dict(showgrid=True),
+        )
+        return forecast_fig
+
+    def generate_figure(self, dates=None, percents=None, title=None):
+        return dcc.Graph(figure=self.forecast_figure(dates=dates, percents=percents, title=title))
+
+    def get_figures(self, dates=None, stats=None):
+        figures = []
+        for index, item in stats.items():
+            print(f"############################################################################################")
+            print(f"###################################        {index}        #######################################")
+            print(f"############################################################################################")
+            figures.append(self.generate_figure(
+                dates=dates,
+                percents=stats.get(index).get('out_percents'),
+                title=f"{index} : {item.get('nb_out')} out, {item.get('current_percent')}%, last out on {item.get('out_dates')[-1]}"
+            ))
+        return figures
+
+
 class Draw:
     def __init__(self, date=None, one=None, two=None, three=None, four=None, five=None, luck=None):
         self.date = date
@@ -86,69 +160,16 @@ class History:
 
 
 if __name__ == '__main__':
-    if os.name == 'nt':
-        History()
-    else:
-        app.run_server(debug=True)
+    history = History()
 
-
-        def format_forecast(history=None):
-            forecast = {
-                'ds': history.all_dates,
-                'y': history.blue_stats.get(11).get('out_percents')
-            }
-
-            return pd.DataFrame.from_dict(forecast)
-
-
-        def forecast_figure(history=None):
-            from fbprophet import Prophet
-            from fbprophet.plot import plot_plotly
-            m = Prophet()
-            m.fit(format_forecast(history=history))
-            future = m.make_future_dataframe(periods=PERIODS)
-            forecast = m.predict(future)
-
-            forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=False, changepoints=True)
-
-            forecast_fig['layout']['showlegend'] = True
-            forecast_fig['layout']['width'] = inf
-
-            forecast_fig.update_layout(
-                xaxis=go.layout.XAxis(
-                    tickformat="%d/%m/%Y",
-                    rangeselector=dict(
-                        buttons=list([
-                            dict(count=1,
-                                 label="1m",
-                                 step="month",
-                                 stepmode="backward"),
-                            dict(count=6,
-                                 label="6m",
-                                 step="month",
-                                 stepmode="backward"),
-                            dict(count=1,
-                                 label="YTD",
-                                 step="year",
-                                 stepmode="todate"),
-                            dict(count=1,
-                                 label="1y",
-                                 step="year",
-                                 stepmode="backward"),
-                            dict(step="all", label="tout")
-                        ])
-                    ),
-                    rangeslider=dict(
-                        visible=True
-                    ),
-                    type="date"
-                ),
-                yaxis=dict(showgrid=True),
-            )
-            return forecast_fig
-
+    if os.name != 'nt':
+        blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)
+        red_figures = Forecast().get_figures(dates=history.all_dates, stats=history.red_stats)
 
         app.layout = html.Div(children=[
-            html.H1(children=f'forecast'),
-            dcc.Graph(id='forecast-graph', figure=forecast_figure(history=History()))
+            html.H2(children=f'blue'),
+            html.Div(children=blue_figures),
+            html.H2(children=f'red'),
+            html.Div(children=red_figures)
         ])
+        app.run_server(debug=True)
