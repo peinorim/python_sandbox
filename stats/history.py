@@ -99,16 +99,18 @@ class History:
     blue_stats = {}
     red_stats = {}
     all_dates = []
+    eu = False
 
     def __init__(self, eu=False):
         file_name = 'history.csv'
-        if eu:
+        self.eu = eu
+        if self.eu:
             file_name = 'eu_history.csv'
         with open(file_name, newline='') as csvfile:
             datareader = csv.reader(csvfile, delimiter=';', quotechar='|')
             for index, row in enumerate(datareader):
                 try:
-                    if eu:
+                    if self.eu:
                         draw = Draw(
                             date=datetime.strptime(row[2], '%d/%m/%Y'),
                             one=int(row[5]),
@@ -116,7 +118,7 @@ class History:
                             three=int(row[7]),
                             four=int(row[8]),
                             five=int(row[9]),
-                            luck=[row[10], row[11]]
+                            luck=[int(row[10]), int(row[11])]
                         )
                     else:
                         draw = Draw(
@@ -138,8 +140,9 @@ class History:
         print("")
 
     def __set_stats(self, draw=None, index=None):
+        max_blue = 50 if not self.eu else 51
         if draw and draw.date and draw.picked and draw.luck:
-            for number in range(1, 50):
+            for number in range(1, max_blue):
                 if not self.blue_stats.get(number):
                     self.blue_stats.update({
                         number: {
@@ -158,7 +161,8 @@ class History:
                 )
                 self.blue_stats[number]['current_percent'] = self.blue_stats[number]['out_percents'][-1]
 
-            for number in range(1, 11):
+            max_red = 11 if not self.eu else 13
+            for number in range(1, max_red):
                 if not self.red_stats.get(number):
                     self.red_stats.update({
                         number: {
@@ -168,7 +172,8 @@ class History:
                             'out_dates': []
                         }
                     })
-                if number == draw.luck:
+                if isinstance(draw.luck, int) and number == draw.luck or \
+                        isinstance(draw.luck, list) and number in draw.luck:
                     self.red_stats[number]['nb_out'] += 1
                     self.red_stats[number]['out_dates'].append(draw.date.strftime("%m/%d/%Y"))
 
