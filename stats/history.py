@@ -154,7 +154,7 @@ class History:
                     })
                 if number in draw.picked:
                     self.blue_stats[number]['nb_out'] += 1
-                    self.blue_stats[number]['out_dates'].append(draw.date.strftime("%m/%d/%Y"))
+                    self.blue_stats[number]['out_dates'].append(draw.date.strftime("%d/%m/%Y"))
 
                 self.blue_stats[number]['out_percents'].append(
                     round((self.blue_stats[number]['nb_out'] / index) * 100, 2)
@@ -175,7 +175,7 @@ class History:
                 if isinstance(draw.luck, int) and number == draw.luck or \
                         isinstance(draw.luck, list) and number in draw.luck:
                     self.red_stats[number]['nb_out'] += 1
-                    self.red_stats[number]['out_dates'].append(draw.date.strftime("%m/%d/%Y"))
+                    self.red_stats[number]['out_dates'].append(draw.date.strftime("%d/%m/%Y"))
 
                 self.red_stats[number]['out_percents'].append(
                     round((self.red_stats[number]['nb_out'] / index) * 100, 2)
@@ -187,7 +187,7 @@ class History:
 
 
 if __name__ == '__main__':
-    history = History(eu=True)
+    history = History(eu=False)
 
     if os.name != 'nt':
         blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)
