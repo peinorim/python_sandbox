@@ -199,4 +199,4 @@ if __name__ == '__main__':
             html.H2(children=f'red'),
             html.Div(children=red_figures)
         ])
-        app.run_server(debug=True)
+        app.run_server(debug=False)
