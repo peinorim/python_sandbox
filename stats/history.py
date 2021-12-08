@@ -194,9 +194,10 @@ if __name__ == '__main__':
         red_figures = Forecast().get_figures(dates=history.all_dates, stats=history.red_stats)
 
         app.layout = html.Div(children=[
-            html.H2(children=f'blue'),
+            html.H2(f'Last draw on : {history.all_dates[-1]:%Y-%m-%d}'),
+            html.H2('Blue'),
             html.Div(children=blue_figures),
-            html.H2(children=f'red'),
+            html.H2('Red'),
             html.Div(children=red_figures)
         ])
         app.run_server(debug=False)
