@@ -101,7 +101,7 @@ class History:
     all_dates = []
     eu = False
 
-    def __init__(self, eu=False):
+    def __init__(self, eu=False, max_date=None):
         file_name = 'history.csv'
         self.eu = eu
         if self.eu:
@@ -110,30 +110,32 @@ class History:
             datareader = csv.reader(csvfile, delimiter=';', quotechar='|')
             for index, row in enumerate(datareader):
                 try:
-                    if self.eu:
-                        draw = Draw(
-                            date=datetime.strptime(row[2], '%d/%m/%Y'),
-                            one=int(row[5]),
-                            two=int(row[6]),
-                            three=int(row[7]),
-                            four=int(row[8]),
-                            five=int(row[9]),
-                            luck=[int(row[10]), int(row[11])]
-                        )
-                    else:
-                        draw = Draw(
-                            date=datetime.strptime(row[2], '%d/%m/%Y'),
-                            one=int(row[4]),
-                            two=int(row[5]),
-                            three=int(row[6]),
-                            four=int(row[7]),
-                            five=int(row[8]),
-                            luck=int(row[9])
-                        )
+                    draw_date = datetime.strptime(row[2], '%d/%m/%Y')
+                    if not max_date or (max_date and draw_date <= max_date):
+                        if self.eu:
+                            draw = Draw(
+                                date=draw_date,
+                                one=int(row[5]),
+                                two=int(row[6]),
+                                three=int(row[7]),
+                                four=int(row[8]),
+                                five=int(row[9]),
+                                luck=[int(row[10]), int(row[11])]
+                            )
+                        else:
+                            draw = Draw(
+                                date=draw_date,
+                                one=int(row[4]),
+                                two=int(row[5]),
+                                three=int(row[6]),
+                                four=int(row[7]),
+                                five=int(row[8]),
+                                luck=int(row[9])
+                            )
 
-                    self.draws.append(draw)
-                    self.all_dates.append(datetime.strptime(row[2], '%d/%m/%Y'))
-                    self.__set_stats(draw=draw, index=index)
+                        self.draws.append(draw)
+                        self.all_dates.append(draw_date)
+                        self.__set_stats(draw=draw, index=index)
                 except ValueError:
                     pass
             csvfile.close()
@@ -187,7 +189,8 @@ class History:
 
 
 if __name__ == '__main__':
-    history = History(eu=False)
+    max_date = datetime.strptime("2021-12-25", '%Y-%m-%d')
+    history = History(eu=False, max_date=max_date)
 
     if os.name != 'nt':
         blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)

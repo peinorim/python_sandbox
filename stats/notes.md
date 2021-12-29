@@ -24,3 +24,17 @@
 
 #### Actual draw 
 > 2,10,31,38,46+8
+
+---
+---
+
+### Draw on 2021-12-29
+
+#### Expected blue :
+> 
+
+#### Expected red :
+> 
+
+#### Actual draw 
+> 
