@@ -9,7 +9,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 app = dash.Dash(__name__)
-PERIODS = 20
+PERIODS = 7
 
 
 class Forecast:
@@ -104,6 +104,9 @@ class History:
     def __init__(self, eu=False, max_date=None):
         file_name = 'history.csv'
         self.eu = eu
+
+        if not max_date:
+            max_date = datetime.now()
         if self.eu:
             file_name = 'eu_history.csv'
         with open(file_name, newline='') as csvfile:
@@ -111,7 +114,7 @@ class History:
             for index, row in enumerate(datareader):
                 try:
                     draw_date = datetime.strptime(row[2], '%d/%m/%Y')
-                    if not max_date or (max_date and draw_date <= max_date):
+                    if draw_date <= max_date:
                         if self.eu:
                             draw = Draw(
                                 date=draw_date,
@@ -189,8 +192,8 @@ class History:
 
 
 if __name__ == '__main__':
-    max_date = datetime.strptime("2021-12-25", '%Y-%m-%d')
-    history = History(eu=False, max_date=max_date)
+    max_date = datetime.strptime("2022-04-28", '%Y-%m-%d')
+    history = History(eu=True, max_date=max_date)
 
     if os.name != 'nt':
         blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)
