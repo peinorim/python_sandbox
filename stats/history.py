@@ -9,9 +9,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 app = dash.Dash(__name__)
-MAX_DATE = "2022-07-03"
-PERIODS = 2
-EU = False
+PERIODS = 1
 
 
 class Forecast:
@@ -198,6 +196,8 @@ class History:
 
 
 if __name__ == '__main__':
+    MAX_DATE = "2022-07-06"
+    EU = False
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
