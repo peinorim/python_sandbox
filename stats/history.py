@@ -9,7 +9,9 @@ import pandas as pd
 import plotly.graph_objects as go
 
 app = dash.Dash(__name__)
-PERIODS = 7
+MAX_DATE = "2022-07-03"
+PERIODS = 2
+EU = False
 
 
 class Forecast:
@@ -81,7 +83,7 @@ class Forecast:
             figures.append(self.generate_figure(
                 dates=dates,
                 percents=stats.get(index).get('out_percents'),
-                title=f"{index} : {item.get('nb_out')} out, {item.get('current_percent')}%, last out on {item.get('out_dates')[-1]}"
+                title=f"{index} : {item.get('nb_out')} out, {item.get('current_percent')}%, last out on {item.get('last_out')}"
             ))
         return figures
 
@@ -153,6 +155,7 @@ class History:
                         number: {
                             'nb_out': 0,
                             'current_percent': 0,
+                            'last_out': None,
                             'out_percents': [],
                             'out_dates': []
                         }
@@ -165,6 +168,7 @@ class History:
                     round((self.blue_stats[number]['nb_out'] / index) * 100, 2)
                 )
                 self.blue_stats[number]['current_percent'] = self.blue_stats[number]['out_percents'][-1]
+                self.blue_stats[number]['last_out'] = self.blue_stats[number]['out_dates'][-1] if self.blue_stats[number]['out_dates'] else None
 
             max_red = 11 if not self.eu else 13
             for number in range(1, max_red):
@@ -173,6 +177,7 @@ class History:
                         number: {
                             'nb_out': 0,
                             'current_percent': 0,
+                            'last_out': None,
                             'out_percents': [],
                             'out_dates': []
                         }
@@ -186,14 +191,15 @@ class History:
                     round((self.red_stats[number]['nb_out'] / index) * 100, 2)
                 )
                 self.red_stats[number]['current_percent'] = self.red_stats[number]['out_percents'][-1]
+                self.red_stats[number]['last_out'] = self.red_stats[number]['out_dates'][-1] if self.red_stats[number]['out_dates'] else None
 
             self.blue_stats = dict(sorted(self.blue_stats.items()))
             self.red_stats = dict(sorted(self.red_stats.items()))
 
 
 if __name__ == '__main__':
-    max_date = datetime.strptime("2022-04-28", '%Y-%m-%d')
-    history = History(eu=True, max_date=max_date)
+    max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
+    history = History(eu=EU, max_date=max_date)
 
     if os.name != 'nt':
         blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)
