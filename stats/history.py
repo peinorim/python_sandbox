@@ -142,7 +142,6 @@ class History:
                 except ValueError:
                     pass
             csvfile.close()
-        print("")
 
     def __set_stats(self, draw=None, index=None):
         max_blue = 50 if not self.eu else 51
@@ -196,8 +195,8 @@ class History:
 
 
 if __name__ == '__main__':
-    MAX_DATE = "2022-07-06"
-    EU = False
+    MAX_DATE = "2022-07-12"
+    EU = True
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
