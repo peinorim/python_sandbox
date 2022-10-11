@@ -28,6 +28,7 @@ def format_forecast(stock=None, start_date=None):
 
     forecast['ds'] = df.index.tolist()
     forecast['y'] = df.Close.tolist()
+    print("")
     return pd.DataFrame.from_dict(forecast)
 
 
