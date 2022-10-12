@@ -1,7 +1,10 @@
 import csv
+import io
 import os
+import zipfile
 from datetime import datetime
 import dash
+import requests
 from dash import html
 from dash import dcc
 from math import inf
@@ -102,46 +105,50 @@ class History:
     eu = False
 
     def __init__(self, eu=False, max_date=None):
-        file_name = 'history.csv'
+
+        url = "https://media.fdj.fr/static/csv/loto/loto_201911.zip"
+        if eu:
+            url = "https://media.fdj.fr/static/csv/euromillions/euromillions_202002.zip"
+        response = requests.get(url, stream=True)
+        z = zipfile.ZipFile(io.BytesIO(response.content))
+        foo2 = z.read(z.infolist()[0])
+        data = foo2.decode('utf-8' if not eu else 'latin-1').splitlines()
         self.eu = eu
 
         if not max_date:
             max_date = datetime.now()
-        if self.eu:
-            file_name = 'eu_history.csv'
-        with open(file_name, newline='') as csvfile:
-            datareader = csv.reader(csvfile, delimiter=';', quotechar='|')
-            for index, row in enumerate(datareader):
-                try:
-                    draw_date = datetime.strptime(row[2], '%d/%m/%Y')
-                    if draw_date <= max_date:
-                        if self.eu:
-                            draw = Draw(
-                                date=draw_date,
-                                one=int(row[5]),
-                                two=int(row[6]),
-                                three=int(row[7]),
-                                four=int(row[8]),
-                                five=int(row[9]),
-                                luck=[int(row[10]), int(row[11])]
-                            )
-                        else:
-                            draw = Draw(
-                                date=draw_date,
-                                one=int(row[4]),
-                                two=int(row[5]),
-                                three=int(row[6]),
-                                four=int(row[7]),
-                                five=int(row[8]),
-                                luck=int(row[9])
-                            )
 
-                        self.draws.append(draw)
-                        self.all_dates.append(draw_date)
-                        self.__set_stats(draw=draw, index=index)
-                except ValueError:
-                    pass
-            csvfile.close()
+        for index, line in enumerate(data):
+            try:
+                row = line.split(';')
+                draw_date = datetime.strptime(row[2], '%d/%m/%Y')
+                if draw_date <= max_date:
+                    if self.eu:
+                        draw = Draw(
+                            date=draw_date,
+                            one=int(row[5]),
+                            two=int(row[6]),
+                            three=int(row[7]),
+                            four=int(row[8]),
+                            five=int(row[9]),
+                            luck=[int(row[10]), int(row[11])]
+                        )
+                    else:
+                        draw = Draw(
+                            date=draw_date,
+                            one=int(row[4]),
+                            two=int(row[5]),
+                            three=int(row[6]),
+                            four=int(row[7]),
+                            five=int(row[8]),
+                            luck=int(row[9])
+                        )
+
+                    self.draws.append(draw)
+                    self.all_dates.append(draw_date)
+                    self.__set_stats(draw=draw, index=index)
+            except ValueError:
+                pass
 
     def __set_stats(self, draw=None, index=None):
         max_blue = 50 if not self.eu else 51
@@ -195,7 +202,7 @@ class History:
 
 
 if __name__ == '__main__':
-    MAX_DATE = "2022-07-12"
+    MAX_DATE = "2022-10-12"
     EU = True
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
