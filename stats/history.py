@@ -219,15 +219,14 @@ if __name__ == '__main__':
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
-    if os.name != 'nt':
-        blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)
-        red_figures = Forecast().get_figures(dates=history.all_dates, stats=history.red_stats)
+    blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)
+    red_figures = Forecast().get_figures(dates=history.all_dates, stats=history.red_stats)
 
-        app.layout = html.Div(children=[
-            html.H2(f'Last draw on : {history.all_dates[-1]:%Y-%m-%d}'),
-            html.H2('Blue'),
-            html.Div(children=blue_figures),
-            html.H2('Red'),
-            html.Div(children=red_figures)
-        ])
-        app.run_server(debug=False)
+    app.layout = html.Div(children=[
+        html.H2(f'Last draw on : {history.all_dates[-1]:%Y-%m-%d}'),
+        html.H2('Blue'),
+        html.Div(children=blue_figures),
+        html.H2('Red'),
+        html.Div(children=red_figures)
+    ])
+    app.run_server(debug=False)
