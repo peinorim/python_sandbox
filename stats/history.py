@@ -1,4 +1,3 @@
-import csv
 import io
 import os
 import zipfile
@@ -10,6 +9,8 @@ from dash import dcc
 from math import inf
 import pandas as pd
 import plotly.graph_objects as go
+from prophet import Prophet
+from prophet.plot import plot_plotly
 
 app = dash.Dash(__name__)
 PERIODS = 1
@@ -26,8 +27,6 @@ class Forecast:
         return pd.DataFrame.from_dict(forecast)
 
     def forecast_figure(self, dates=None, percents=None, title=None):
-        from fbprophet import Prophet
-        from fbprophet.plot import plot_plotly
         m = Prophet()
         m.fit(self.format_forecast(dates=dates, percents=percents))
         future = m.make_future_dataframe(periods=PERIODS)
@@ -172,7 +171,8 @@ class History:
                     round((self.blue_stats[number]['nb_out'] / index) * 100, 2)
                 )
                 self.blue_stats[number]['current_percent'] = self.blue_stats[number]['out_percents'][-1]
-                self.blue_stats[number]['last_out'] = self.blue_stats[number]['out_dates'][-1] if self.blue_stats[number]['out_dates'] else None
+                self.blue_stats[number]['last_out'] = self.blue_stats[number]['out_dates'][-1] if \
+                    self.blue_stats[number]['out_dates'] else None
 
             max_red = 11 if not self.eu else 13
             for number in range(1, max_red):
@@ -195,7 +195,8 @@ class History:
                     round((self.red_stats[number]['nb_out'] / index) * 100, 2)
                 )
                 self.red_stats[number]['current_percent'] = self.red_stats[number]['out_percents'][-1]
-                self.red_stats[number]['last_out'] = self.red_stats[number]['out_dates'][-1] if self.red_stats[number]['out_dates'] else None
+                self.red_stats[number]['last_out'] = self.red_stats[number]['out_dates'][-1] if self.red_stats[number][
+                    'out_dates'] else None
 
             self.blue_stats = dict(sorted(self.blue_stats.items()))
             self.red_stats = dict(sorted(self.red_stats.items()))

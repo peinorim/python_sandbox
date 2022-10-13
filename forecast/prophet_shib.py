@@ -3,8 +3,8 @@ from math import inf
 import dash
 from dash import html
 from dash import dcc
-from fbprophet import Prophet
-from fbprophet.plot import plot_plotly
+from prophet import Prophet
+from prophet.plot import plot_plotly
 import plotly.graph_objects as go
 import pandas as pd
 import csv

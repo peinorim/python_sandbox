@@ -3,22 +3,18 @@ from math import inf
 import dash
 from dash import html
 from dash import dcc
-from fbprophet import Prophet
-from fbprophet.plot import plot_plotly
+from prophet import Prophet
+from prophet.plot import plot_plotly
 import plotly.graph_objects as go
 import pandas as pd
 import csv
 from datetime import datetime
-
-from forecast import RedisCache
 
 app = dash.Dash(__name__)
 
 START_DATE = datetime.strptime("2019-03-25", "%Y-%m-%d")
 PERIODS = 300
 TIMEOUT_STANDARD = 30
-
-cache = RedisCache(app=app).get_cache()
 
 
 def format_ada_forecast(start_date=None):

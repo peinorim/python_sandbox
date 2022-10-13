@@ -5,4 +5,6 @@ dash_bootstrap_components
 pandas
 redis
 flask_caching
-fbprophet
+prophet
+plotly
+yfinance

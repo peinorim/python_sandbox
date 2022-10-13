@@ -3,8 +3,8 @@ import yfinance as yf
 import dash
 from dash import html
 from dash import dcc
-from fbprophet import Prophet
-from fbprophet.plot import plot_plotly
+from prophet import Prophet
+from prophet.plot import plot_plotly
 from math import inf
 import pandas as pd
 import plotly.graph_objects as go
@@ -18,10 +18,7 @@ START_DATE = "2018-03-25"
 PERIODS = 200
 TIMEOUT_STANDARD = 3600 * 8
 
-cache = RedisCache(app=app).get_cache()
 
-
-@cache.memoize(timeout=TIMEOUT_STANDARD)
 def format_forecast(stock=None, start_date=None):
     forecast = {'ds': [], 'y': []}
     df = yf.download(stock, start=start_date, end=datetime.now().strftime("%Y-%m-%d"))
@@ -32,7 +29,6 @@ def format_forecast(stock=None, start_date=None):
     return pd.DataFrame.from_dict(forecast)
 
 
-@cache.memoize(timeout=TIMEOUT_STANDARD)
 def forecast_figure(stock=None, start_date=None, periods=None):
     m = Prophet()
     m.fit(format_forecast(stock=stock, start_date=start_date))
