@@ -96,6 +96,20 @@ class Draw:
         self.result = f'{"-".join(map(str, self.picked))}+{self.luck}'
 
 
+class ZipToData:
+
+    def zip_to_data(self, url=None, eu=False):
+        if url:
+            try:
+                response = requests.get(url, stream=True)
+                z = zipfile.ZipFile(io.BytesIO(response.content))
+                foo2 = z.read(z.infolist()[0])
+                return foo2.decode('utf-8' if not eu else 'latin-1').splitlines()
+            except Exception as err:
+                print(str(err))
+        return {}
+
+
 class History:
     draws = []
     blue_stats = {}
@@ -108,10 +122,7 @@ class History:
         url = "https://media.fdj.fr/static/csv/loto/loto_201911.zip"
         if eu:
             url = "https://media.fdj.fr/static/csv/euromillions/euromillions_202002.zip"
-        response = requests.get(url, stream=True)
-        z = zipfile.ZipFile(io.BytesIO(response.content))
-        foo2 = z.read(z.infolist()[0])
-        data = foo2.decode('utf-8' if not eu else 'latin-1').splitlines()
+        data = ZipToData().zip_to_data(url=url, eu=eu)
         self.eu = eu
 
         if not max_date:
