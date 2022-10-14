@@ -12,9 +12,14 @@ import plotly.graph_objects as go
 from prophet import Prophet
 from prophet.plot import plot_plotly
 from requests import RequestException
+import logging
+
+cmdstanpy_logger = logging.getLogger("cmdstanpy")
+cmdstanpy_logger.disabled = True
 
 app = dash.Dash(__name__)
 PERIODS = 5
+GRAPHS = False
 
 
 class Forecast:
@@ -26,6 +31,17 @@ class Forecast:
         }
 
         return pd.DataFrame.from_dict(forecast)
+
+    def get_forecast(self, dates=None, percents=None):
+        m = Prophet()
+        m.fit(self.format_forecast(dates=dates, percents=percents))
+        future = m.make_future_dataframe(periods=PERIODS)
+        future_values = list(m.predict(future).yhat.values)
+        return [
+            future_values[-PERIODS - 1],
+            future_values[-PERIODS + 2],
+            round(((future_values[-PERIODS + 2] - future_values[-PERIODS - 1]) / future_values[-PERIODS - 1]) * 100, 2)
+        ]
 
     def forecast_figure(self, dates=None, percents=None, title=None):
         m = Prophet()
@@ -148,6 +164,8 @@ class History:
             url = "https://media.fdj.fr/static/csv/euromillions/euromillions_202002.zip"
         data = ZipToData().zip_to_data(url=url, eu=eu)
         self.eu = eu
+        self.max_blue = 50 if not self.eu else 51
+        self.max_red = 11 if not self.eu else 13
 
         if not max_date:
             max_date = datetime.now()
@@ -187,9 +205,9 @@ class History:
                 pass
 
     def __set_stats(self, draw=None, index=None):
-        max_blue = 50 if not self.eu else 51
+
         if draw and draw.date and draw.picked and draw.luck:
-            for number in range(1, max_blue):
+            for number in range(1, self.max_blue):
                 if not self.blue_stats.get(number):
                     self.blue_stats.update({
                         number: {
@@ -197,7 +215,8 @@ class History:
                             'current_percent': 0,
                             'last_out': None,
                             'out_percents': [],
-                            'out_dates': []
+                            'out_dates': [],
+                            'forecast': None,
                         }
                     })
                 if number in draw.picked:
@@ -212,8 +231,7 @@ class History:
                 self.blue_stats[number]['last_out'] = self.blue_stats[number]['out_dates'][-1] if \
                     self.blue_stats[number]['out_dates'] else None
 
-            max_red = 11 if not self.eu else 13
-            for number in range(1, max_red):
+            for number in range(1, self.max_red):
                 if not self.red_stats.get(number):
                     self.red_stats.update({
                         number: {
@@ -221,7 +239,8 @@ class History:
                             'current_percent': 0,
                             'last_out': None,
                             'out_percents': [],
-                            'out_dates': []
+                            'out_dates': [],
+                            'forecast': None,
                         }
                     })
                 if isinstance(draw.luck, int) and number == draw.luck or \
@@ -241,6 +260,22 @@ class History:
             self.blue_stats = dict(sorted(self.blue_stats.items()))
             self.red_stats = dict(sorted(self.red_stats.items()))
 
+    def get_predictions(self):
+        print("BLUE : ")
+        for number in range(1, self.max_blue):
+            self.blue_stats[number]['forecast'] = Forecast().get_forecast(
+                dates=self.all_dates,
+                percents=self.blue_stats.get(number).get('out_percents')
+            )
+            print(f"{number} - {self.blue_stats[number]['forecast']}")
+        print("RED : ")
+        for number in range(1, self.max_red):
+            self.red_stats[number]['forecast'] = Forecast().get_forecast(
+                dates=self.all_dates,
+                percents=self.red_stats.get(number).get('out_percents')
+            )
+            print(f"{number} - {self.red_stats[number]['forecast']}")
+
 
 if __name__ == '__main__':
     MAX_DATE = "2022-10-14"
@@ -248,14 +283,17 @@ if __name__ == '__main__':
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
-    blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)
-    red_figures = Forecast().get_figures(dates=history.all_dates, stats=history.red_stats)
+    if GRAPHS:
+        blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)
+        red_figures = Forecast().get_figures(dates=history.all_dates, stats=history.red_stats)
 
-    app.layout = html.Div(children=[
-        html.H2(f'Last draw on : {history.all_dates[-1]:%Y-%m-%d}'),
-        html.H2('Blue'),
-        html.Div(children=blue_figures),
-        html.H2('Red'),
-        html.Div(children=red_figures)
-    ])
-    app.run_server(debug=False)
+        app.layout = html.Div(children=[
+            html.H2(f'Last draw on : {history.all_dates[-1]:%Y-%m-%d}'),
+            html.H2('Blue'),
+            html.Div(children=blue_figures),
+            html.H2('Red'),
+            html.Div(children=red_figures)
+        ])
+        app.run_server(debug=False)
+    else:
+        history.get_predictions()
