@@ -1,4 +1,5 @@
 import io
+import os
 import zipfile
 from datetime import datetime
 import dash
@@ -113,6 +114,10 @@ class ZipToData:
                 response = requests.get(url, stream=True)
                 z = zipfile.ZipFile(io.BytesIO(response.content))
                 file_data = z.read(z.infolist()[0])
+                f = open(f"{os.getcwd()}/{file_name}", 'wb')
+                f.write(response.content)
+                f.close()
+                z.close()
             except RequestException:
                 if eu:
                     archive = zipfile.ZipFile(file_name, 'r')
@@ -235,7 +240,7 @@ class History:
 
 if __name__ == '__main__':
     MAX_DATE = "2022-10-14"
-    EU = True
+    EU = False
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
