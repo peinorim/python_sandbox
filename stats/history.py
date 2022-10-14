@@ -83,7 +83,7 @@ class Forecast:
             figures.append(self.generate_figure(
                 dates=dates,
                 percents=stats.get(index).get('out_percents'),
-                title=f"{index} : {item.get('nb_out')} out, {item.get('current_percent')}%, last out on {item.get('last_out')}"
+                title=f"{index} : {item.get('nb_out')} out, {item.get('current_percent')}%, last out on {item.get('last_out'):%Y-%m-%d}"
             ))
         return figures
 
@@ -198,11 +198,10 @@ class History:
                 self.blue_stats[number]['out_percents'].append(
                     round((self.blue_stats[number]['nb_out'] / index) * 100, 2)
                 )
+                self.blue_stats[number]['out_dates'].sort()
                 self.blue_stats[number]['current_percent'] = self.blue_stats[number]['out_percents'][-1]
                 self.blue_stats[number]['last_out'] = self.blue_stats[number]['out_dates'][-1] if \
                     self.blue_stats[number]['out_dates'] else None
-
-                self.blue_stats[number]['out_dates'].sort()
 
             max_red = 11 if not self.eu else 13
             for number in range(1, max_red):
@@ -224,18 +223,18 @@ class History:
                 self.red_stats[number]['out_percents'].append(
                     round((self.red_stats[number]['nb_out'] / index) * 100, 2)
                 )
+                self.red_stats[number]['out_dates'].sort()
+
                 self.red_stats[number]['current_percent'] = self.red_stats[number]['out_percents'][-1]
                 self.red_stats[number]['last_out'] = self.red_stats[number]['out_dates'][-1] if self.red_stats[number][
                     'out_dates'] else None
-
-                self.red_stats[number]['out_dates'].sort()
 
             self.blue_stats = dict(sorted(self.blue_stats.items()))
             self.red_stats = dict(sorted(self.red_stats.items()))
 
 
 if __name__ == '__main__':
-    MAX_DATE = "2022-10-12"
+    MAX_DATE = "2022-10-14"
     EU = True
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
