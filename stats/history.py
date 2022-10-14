@@ -133,10 +133,9 @@ class ZipToData:
                 z.close()
             except RequestException:
                 # offline mode
-                if eu:
-                    archive = zipfile.ZipFile(file_name, 'r')
-                    file_data = archive.read(list(archive.NameToInfo.keys())[0])
-                    archive.close()
+                archive = zipfile.ZipFile(file_name, 'r')
+                file_data = archive.read(list(archive.NameToInfo.keys())[0])
+                archive.close()
             except Exception as err:
                 print(str(err))
             if file_data:
@@ -279,7 +278,7 @@ class History:
 
 if __name__ == '__main__':
     MAX_DATE = "2022-10-14"
-    EU = True
+    EU = False
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
