@@ -216,6 +216,7 @@ class History:
                             'out_percents': [],
                             'out_dates': [],
                             'forecast': None,
+                            'prediction': None,
                         }
                     })
                 if number in draw.picked:
@@ -240,6 +241,7 @@ class History:
                             'out_percents': [],
                             'out_dates': [],
                             'forecast': None,
+                            'prediction': None,
                         }
                     })
                 if isinstance(draw.luck, int) and number == draw.luck or \
@@ -266,6 +268,7 @@ class History:
                 dates=self.all_dates,
                 percents=self.blue_stats.get(number).get('out_percents')
             )
+            self.blue_stats[number]['prediction'] = self.blue_stats[number]['forecast'][-1]
             print(f"{number} - {self.blue_stats[number]['forecast']}")
         print("RED : ")
         for number in range(1, self.max_red):
@@ -273,12 +276,13 @@ class History:
                 dates=self.all_dates,
                 percents=self.red_stats.get(number).get('out_percents')
             )
+            self.red_stats[number]['prediction'] = self.red_stats[number]['forecast'][-1]
             print(f"{number} - {self.red_stats[number]['forecast']}")
 
 
 if __name__ == '__main__':
     MAX_DATE = "2022-10-14"
-    EU = True
+    EU = False
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
