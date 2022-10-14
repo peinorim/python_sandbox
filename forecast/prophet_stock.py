@@ -9,8 +9,6 @@ from math import inf
 import pandas as pd
 import plotly.graph_objects as go
 
-from forecast import RedisCache
-
 app = dash.Dash(__name__)
 
 STOCK = "ACA.PA"

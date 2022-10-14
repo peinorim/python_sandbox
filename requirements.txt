@@ -1,10 +1,7 @@
 requests
-gunicorn
 dash
 dash_bootstrap_components
 pandas
-redis
-flask_caching
 prophet
 plotly
 yfinance
