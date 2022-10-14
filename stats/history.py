@@ -103,31 +103,35 @@ class ZipToData:
         if url:
             file_data = None
             file_name = 'fr.zip'
-            csv_name = 'loto_201911.csv'
             encoding = 'utf-8'
             if eu:
                 file_name = 'eu.zip'
-                csv_name = 'euromillions_202002.csv'
                 encoding = 'latin-1'
 
             try:
+                # online mode
                 response = requests.get(url, stream=True)
                 z = zipfile.ZipFile(io.BytesIO(response.content))
                 file_data = z.read(z.infolist()[0])
-                f = open(f"{os.getcwd()}/{file_name}", 'wb')
-                f.write(response.content)
-                f.close()
+                self.__save_to_file(content=response.content, file_name=file_name)
                 z.close()
             except RequestException:
+                # offline mode
                 if eu:
                     archive = zipfile.ZipFile(file_name, 'r')
-                    file_data = archive.read(csv_name)
+                    file_data = archive.read(list(archive.NameToInfo.keys())[0])
                     archive.close()
             except Exception as err:
                 print(str(err))
             if file_data:
                 return file_data.decode(encoding=encoding).splitlines()
         return {}
+
+    def __save_to_file(self, content=None, file_name=None):
+        if content and file_name:
+            f = open(f"{os.getcwd()}/{file_name}", 'wb')
+            f.write(content)
+            f.close()
 
 
 class History:
@@ -240,7 +244,7 @@ class History:
 
 if __name__ == '__main__':
     MAX_DATE = "2022-10-14"
-    EU = False
+    EU = True
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
