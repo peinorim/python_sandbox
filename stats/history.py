@@ -1,5 +1,4 @@
 import io
-import os
 import zipfile
 from datetime import datetime
 import dash
@@ -11,9 +10,10 @@ import pandas as pd
 import plotly.graph_objects as go
 from prophet import Prophet
 from prophet.plot import plot_plotly
+from requests import RequestException
 
 app = dash.Dash(__name__)
-PERIODS = 1
+PERIODS = 5
 
 
 class Forecast:
@@ -100,13 +100,28 @@ class ZipToData:
 
     def zip_to_data(self, url=None, eu=False):
         if url:
+            file_data = None
+            file_name = 'fr.zip'
+            csv_name = 'loto_201911.csv'
+            encoding = 'utf-8'
+            if eu:
+                file_name = 'eu.zip'
+                csv_name = 'euromillions_202002.csv'
+                encoding = 'latin-1'
+
             try:
                 response = requests.get(url, stream=True)
                 z = zipfile.ZipFile(io.BytesIO(response.content))
-                foo2 = z.read(z.infolist()[0])
-                return foo2.decode('utf-8' if not eu else 'latin-1').splitlines()
+                file_data = z.read(z.infolist()[0])
+            except RequestException:
+                if eu:
+                    archive = zipfile.ZipFile(file_name, 'r')
+                    file_data = archive.read(csv_name)
+                    archive.close()
             except Exception as err:
                 print(str(err))
+            if file_data:
+                return file_data.decode(encoding=encoding).splitlines()
         return {}
 
 
@@ -155,7 +170,9 @@ class History:
                         )
 
                     self.draws.append(draw)
+                    self.draws = sorted(self.draws, key=lambda x: x.date, reverse=False)
                     self.all_dates.append(draw_date)
+                    self.all_dates.sort()
                     self.__set_stats(draw=draw, index=index)
             except ValueError:
                 pass
@@ -176,7 +193,7 @@ class History:
                     })
                 if number in draw.picked:
                     self.blue_stats[number]['nb_out'] += 1
-                    self.blue_stats[number]['out_dates'].append(draw.date.strftime("%d/%m/%Y"))
+                    self.blue_stats[number]['out_dates'].append(draw.date)
 
                 self.blue_stats[number]['out_percents'].append(
                     round((self.blue_stats[number]['nb_out'] / index) * 100, 2)
@@ -184,6 +201,8 @@ class History:
                 self.blue_stats[number]['current_percent'] = self.blue_stats[number]['out_percents'][-1]
                 self.blue_stats[number]['last_out'] = self.blue_stats[number]['out_dates'][-1] if \
                     self.blue_stats[number]['out_dates'] else None
+
+                self.blue_stats[number]['out_dates'].sort()
 
             max_red = 11 if not self.eu else 13
             for number in range(1, max_red):
@@ -200,7 +219,7 @@ class History:
                 if isinstance(draw.luck, int) and number == draw.luck or \
                         isinstance(draw.luck, list) and number in draw.luck:
                     self.red_stats[number]['nb_out'] += 1
-                    self.red_stats[number]['out_dates'].append(draw.date.strftime("%d/%m/%Y"))
+                    self.red_stats[number]['out_dates'].append(draw.date)
 
                 self.red_stats[number]['out_percents'].append(
                     round((self.red_stats[number]['nb_out'] / index) * 100, 2)
@@ -208,6 +227,8 @@ class History:
                 self.red_stats[number]['current_percent'] = self.red_stats[number]['out_percents'][-1]
                 self.red_stats[number]['last_out'] = self.red_stats[number]['out_dates'][-1] if self.red_stats[number][
                     'out_dates'] else None
+
+                self.red_stats[number]['out_dates'].sort()
 
             self.blue_stats = dict(sorted(self.blue_stats.items()))
             self.red_stats = dict(sorted(self.red_stats.items()))
