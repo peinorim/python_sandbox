@@ -17,8 +17,7 @@ import logging
 cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
-app = dash.Dash(__name__)
-PERIODS = 5
+PERIODS = 3
 GRAPHS = False
 
 
@@ -37,10 +36,12 @@ class Forecast:
         m.fit(self.format_forecast(dates=dates, percents=percents))
         future = m.make_future_dataframe(periods=PERIODS)
         future_values = list(m.predict(future).yhat.values)
+        low_val = future_values[-PERIODS-1]
+        high_val = future_values[-1]
         return [
-            future_values[-PERIODS - 1],
-            future_values[-PERIODS + 2],
-            round(((future_values[-PERIODS + 2] - future_values[-PERIODS - 1]) / future_values[-PERIODS - 1]) * 100, 2)
+            low_val,
+            high_val,
+            round(((high_val - low_val) / low_val) * 100, 2)
         ]
 
     def forecast_figure(self, dates=None, percents=None, title=None):
@@ -125,14 +126,14 @@ class ZipToData:
                 encoding = 'latin-1'
 
             try:
-                # online mode
                 response = requests.get(url, stream=True)
+                print("#########        ONLINE MODE        #########")
                 z = zipfile.ZipFile(io.BytesIO(response.content))
                 file_data = z.read(z.infolist()[0])
                 self.__save_to_file(content=response.content, file_name=file_name)
                 z.close()
             except RequestException:
-                # offline mode
+                print("#########        OFFLINE MODE        #########")
                 archive = zipfile.ZipFile(file_name, 'r')
                 file_data = archive.read(list(archive.NameToInfo.keys())[0])
                 archive.close()
@@ -269,7 +270,8 @@ class History:
                 percents=self.blue_stats.get(number).get('out_percents')
             )
             self.blue_stats[number]['prediction'] = self.blue_stats[number]['forecast'][-1]
-            print(f"{number} - {self.blue_stats[number]['forecast']}")
+            print(
+                f"{number} - Last : {self.blue_stats[number]['last_out']:%Y-%m-%d} - {self.blue_stats[number]['current_percent']}% || {self.blue_stats[number]['forecast']}")
         print("RED : ")
         for number in range(1, self.max_red):
             self.red_stats[number]['forecast'] = Forecast().get_forecast(
@@ -277,16 +279,18 @@ class History:
                 percents=self.red_stats.get(number).get('out_percents')
             )
             self.red_stats[number]['prediction'] = self.red_stats[number]['forecast'][-1]
-            print(f"{number} - {self.red_stats[number]['forecast']}")
+            print(
+                f"{number} - Last : {self.red_stats[number]['last_out']:%Y-%m-%d} - {self.red_stats[number]['current_percent']}% || {self.red_stats[number]['forecast']}")
 
 
 if __name__ == '__main__':
-    MAX_DATE = "2022-10-14"
-    EU = True
+    MAX_DATE = "2022-10-13"
+    EU = False
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
     if GRAPHS:
+        app = dash.Dash(__name__)
         blue_figures = Forecast().get_figures(dates=history.all_dates, stats=history.blue_stats)
         red_figures = Forecast().get_figures(dates=history.all_dates, stats=history.red_stats)
 
