@@ -284,7 +284,7 @@ class History:
 
 
 if __name__ == '__main__':
-    MAX_DATE = "2022-10-17"
+    MAX_DATE = "2022-10-18"
     EU = True
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
