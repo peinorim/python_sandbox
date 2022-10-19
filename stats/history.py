@@ -18,7 +18,6 @@ cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
 PERIODS = 5
-GRAPHS = False
 
 
 class Forecast:
@@ -200,11 +199,11 @@ class History:
                     self.draws = sorted(self.draws, key=lambda x: x.date, reverse=False)
                     self.all_dates.append(draw_date)
                     self.all_dates.sort()
-                    self.__set_stats(draw=draw, index=index)
+                    self.__set_stats(draw=draw)
             except ValueError:
                 pass
 
-    def __set_stats(self, draw=None, index=None):
+    def __set_stats(self, draw=None):
 
         if draw and draw.date and draw.picked and draw.luck:
             for number in range(1, self.max_blue):
@@ -225,7 +224,7 @@ class History:
                     self.blue_stats[number]['out_dates'].append(draw.date)
 
                 self.blue_stats[number]['out_percents'].append(
-                    round((self.blue_stats[number]['nb_out'] / index) * 100, 2)
+                    round((self.blue_stats[number]['nb_out'] / len(self.draws)) * 100, 2)
                 )
                 self.blue_stats[number]['out_dates'].sort()
                 self.blue_stats[number]['current_percent'] = self.blue_stats[number]['out_percents'][-1]
@@ -251,7 +250,7 @@ class History:
                     self.red_stats[number]['out_dates'].append(draw.date)
 
                 self.red_stats[number]['out_percents'].append(
-                    round((self.red_stats[number]['nb_out'] / index) * 100, 2)
+                    round((self.red_stats[number]['nb_out'] / len(self.draws)) * 100, 2)
                 )
                 self.red_stats[number]['out_dates'].sort()
 
@@ -263,7 +262,8 @@ class History:
             self.red_stats = dict(sorted(self.red_stats.items()))
 
     def get_predictions(self):
-        print("BLUE : ")
+        print(f"###################################        LAST DRAW ON : {self.all_dates[-1]:%Y-%m-%d}        #######################################")
+        print("###################################        BLUE        #######################################")
         for number in range(1, self.max_blue):
             self.blue_stats[number]['forecast'] = Forecast().get_forecast(
                 dates=self.all_dates,
@@ -272,7 +272,7 @@ class History:
             self.blue_stats[number]['prediction'] = self.blue_stats[number]['forecast'][-1]
             print(
                 f"{number} - Last : {self.blue_stats[number]['last_out']:%Y-%m-%d} - {self.blue_stats[number]['current_percent']}% || {self.blue_stats[number]['forecast']}")
-        print("RED : ")
+        print("###################################        RED        #######################################")
         for number in range(1, self.max_red):
             self.red_stats[number]['forecast'] = Forecast().get_forecast(
                 dates=self.all_dates,
@@ -286,6 +286,7 @@ class History:
 if __name__ == '__main__':
     MAX_DATE = "2022-10-19"
     EU = True
+    GRAPHS = False
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
