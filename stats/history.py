@@ -40,7 +40,7 @@ class Forecast:
         return [
             low_val,
             high_val,
-            round(((high_val - low_val) / low_val) * 100, 2)
+            round(((high_val - low_val) / abs(low_val)) * 100, 2)
         ]
 
     def forecast_figure(self, dates=None, percents=None, title=None):
@@ -284,7 +284,7 @@ class History:
 
 
 if __name__ == '__main__':
-    MAX_DATE = "2022-10-19"
+    MAX_DATE = "2022-10-16"
     EU = True
     GRAPHS = False
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
