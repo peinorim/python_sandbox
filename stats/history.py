@@ -17,7 +17,7 @@ import logging
 cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
-PERIODS = 4
+PERIODS = 5
 GRAPHS = False
 
 
@@ -37,7 +37,7 @@ class Forecast:
         future = m.make_future_dataframe(periods=PERIODS)
         future_values = list(m.predict(future).yhat.values)
         low_val = future_values[-PERIODS]
-        high_val = future_values[-2]
+        high_val = future_values[-1]
         return [
             low_val,
             high_val,
@@ -284,7 +284,7 @@ class History:
 
 
 if __name__ == '__main__':
-    MAX_DATE = "2022-10-18"
+    MAX_DATE = "2022-10-19"
     EU = True
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
