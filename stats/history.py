@@ -18,6 +18,9 @@ cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
 PERIODS = 5
+MAX_DATE = "2022-10-24"
+EU = True
+GRAPHS = False
 
 
 class Forecast:
@@ -262,7 +265,8 @@ class History:
             self.red_stats = dict(sorted(self.red_stats.items()))
 
     def get_predictions(self):
-        print(f"###################################        LAST DRAW ON : {self.all_dates[-1]:%Y-%m-%d}        #######################################")
+        print(
+            f"###################################        LAST DRAW ON : {self.all_dates[-1]:%Y-%m-%d}        #######################################")
         print("###################################        BLUE        #######################################")
         for number in range(1, self.max_blue):
             self.blue_stats[number]['forecast'] = Forecast().get_forecast(
@@ -284,9 +288,7 @@ class History:
 
 
 if __name__ == '__main__':
-    MAX_DATE = "2022-10-16"
-    EU = True
-    GRAPHS = False
+
     max_date = datetime.strptime(MAX_DATE, '%Y-%m-%d')
     history = History(eu=EU, max_date=max_date)
 
