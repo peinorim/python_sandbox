@@ -14,7 +14,6 @@ app = dash.Dash(__name__)
 STOCK = "ACA.PA"
 START_DATE = "2018-03-25"
 PERIODS = 200
-TIMEOUT_STANDARD = 3600 * 8
 
 
 def format_forecast(stock=None, start_date=None):

@@ -9,18 +9,12 @@ import pandas as pd
 import requests
 from datetime import datetime
 
-from forecast import RedisCache
-
 app = dash.Dash(__name__)
 
 START_DATE = "2017-03-25"
 PERIODS = 300
-TIMEOUT_STANDARD = 30
-
-cache = RedisCache(app=app).get_cache()
 
 
-@cache.memoize(timeout=TIMEOUT_STANDARD)
 def format_bpi_forecast(start_date=None):
     forecast = {'ds': [], 'y': []}
     PARAMS = {'start': start_date, 'end': datetime.now().strftime("%Y-%m-%d")}
@@ -32,7 +26,6 @@ def format_bpi_forecast(start_date=None):
     return {'forecast': forecast}
 
 
-@cache.memoize(timeout=TIMEOUT_STANDARD)
 def forecast_bpi_figure(start_date=None, periods=None):
     forecast = format_bpi_forecast(start_date=start_date)
     df = pd.DataFrame.from_dict(forecast['forecast'])
