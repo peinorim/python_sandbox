@@ -18,7 +18,7 @@ cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
 PERIODS = 5
-MAX_DATE = "2022-10-26"
+MAX_DATE = "2022-11-01"
 EU = True
 GRAPHS = False
 
@@ -39,7 +39,7 @@ class Forecast:
         future = m.make_future_dataframe(periods=PERIODS)
         future_values = list(m.predict(future).yhat.values)
         low_val = future_values[-PERIODS-1]
-        high_val = future_values[-3]
+        high_val = future_values[-2]
         return [
             low_val,
             high_val,
@@ -161,9 +161,9 @@ class History:
 
     def __init__(self, eu=False, max_date=None):
 
-        url = "https://media.fdj.fr/static/csv/loto/loto_201911.zip"
+        url = "https://media.fdj.fr/static-draws/csv/loto/loto_201911.zip"
         if eu:
-            url = "https://media.fdj.fr/static/csv/euromillions/euromillions_202002.zip"
+            url = "https://media.fdj.fr/static-draws/csv/euromillions/euromillions_202002.zip"
         data = ZipToData().zip_to_data(url=url, eu=eu)
         self.eu = eu
         self.max_blue = 50 if not self.eu else 51
