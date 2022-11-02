@@ -1,12 +1,12 @@
 ## Notes
 
-### Draw on 21/10/2022
+### Draw on 2022-11-02
 
 #### Expected blue :
-> 17,24,31,38,42,44
+> 5,9,17,22,31,41,42,47
 
 #### Expected red :
-> 1,9
+> 9,10
 
 #### Actual draw 
 > 
