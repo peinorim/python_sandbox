@@ -39,7 +39,7 @@ class Forecast:
         future = m.make_future_dataframe(periods=PERIODS)
         future_values = list(m.predict(future).yhat.values)
         low_val = future_values[-PERIODS-1]
-        high_val = future_values[-2]
+        high_val = future_values[-3]
         return [
             low_val,
             high_val,
