@@ -1,6 +1,6 @@
 ## Notes
 
-### Draw on 2022-11-09
+### Draw on 2022-11-14
 
 #### Expected blue :
 > 5,12,22,38,46,47
