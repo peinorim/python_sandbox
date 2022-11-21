@@ -18,7 +18,7 @@ cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
 PERIODS = 5
-MAX_DATE = "2022-11-09"
+MAX_DATE = "2022-11-21"
 EU = False
 GRAPHS = False
 
@@ -39,7 +39,7 @@ class Forecast:
         future = m.make_future_dataframe(periods=PERIODS)
         future_values = list(m.predict(future).yhat.values)
         low_val = future_values[-PERIODS-1]
-        high_val = future_values[-1]
+        high_val = future_values[-2]
         return [
             low_val,
             high_val,
@@ -129,13 +129,13 @@ class ZipToData:
 
             try:
                 response = requests.get(url, stream=True)
-                print("#########        ONLINE MODE        #########")
+                print("###################################        ONLINE MODE       #######################################")
                 z = zipfile.ZipFile(io.BytesIO(response.content))
                 file_data = z.read(z.infolist()[0])
                 self.__save_to_file(content=response.content, file_name=file_name)
                 z.close()
             except RequestException:
-                print("#########        OFFLINE MODE        #########")
+                print("###################################        OFFLINE MODE       #######################################")
                 archive = zipfile.ZipFile(file_name, 'r')
                 file_data = archive.read(list(archive.NameToInfo.keys())[0])
                 archive.close()
@@ -266,7 +266,7 @@ class History:
 
     def get_predictions(self):
         print(
-            f"###################################        LAST DRAW ON : {self.all_dates[-1]:%Y-%m-%d}        #######################################")
+            f"###################################        LAST {'EU' if self.eu else 'FR'} : {self.all_dates[-1]:%Y-%m-%d} : {self.draws[-1].result}       #######################################")
         print("###################################        BLUE        #######################################")
         for number in range(1, self.max_blue):
             self.blue_stats[number]['forecast'] = Forecast().get_forecast(
