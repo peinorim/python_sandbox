@@ -1,12 +1,12 @@
 ## Notes
 
-### Draw on 2022-11-15
+### Draw on 2022-12-02
 
 #### Expected blue :
-> 6,10,12,17,35,38
+> 6,12,17,28,30
 
 #### Expected red :
-> 3,11,12
+> 9,11
 
 #### Actual draw 
 > 
