@@ -1,7 +1,7 @@
 requests
 dash
-dash_bootstrap_components
 pandas
 prophet
 plotly
 yfinance
+openai
