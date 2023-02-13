@@ -9,7 +9,9 @@ from ai import OPENAI_API_KEY
 openai.proxy = 'http://127.0.0.1:3128/'
 openai.api_key = OPENAI_API_KEY
 
-img_request = "diagon alley in the late 1800's"
+img_request = "a dark alley in whitechapel, London in the late 1800's"
+url = None
+
 try:
 
     ai_response = openai.Image.create(
@@ -26,7 +28,8 @@ try:
         f.write(response.content)
         f.close()
 
+    if url:
+        webbrowser.open(url, new=0, autoraise=True)
+
 except Exception as err:
     print(err)
-
-webbrowser.open(url, new=0, autoraise=True)
