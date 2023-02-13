@@ -9,27 +9,39 @@ from ai import OPENAI_API_KEY
 openai.proxy = 'http://127.0.0.1:3128/'
 openai.api_key = OPENAI_API_KEY
 
-img_request = "a dark alley in whitechapel, London in the late 1800's"
-url = None
 
-try:
+class ImageGenerator:
 
-    ai_response = openai.Image.create(
-        prompt=img_request,
-        n=1,
-        size="1024x1024"
-    )
+    def generate(self, img_request: str = None) -> bool:
+        """
 
-    url = ai_response['data'][0]['url']
+        :param img_request:
+        :return:
+        """
+        try:
 
-    response = requests.get(url, proxies={"https": openai.proxy} if openai.proxy else None)
-    if response.content:
-        f = open(f"{os.getcwd()}\\images\\{img_request.replace(' ', '-').replace('.', '_')}.png", 'wb')
-        f.write(response.content)
-        f.close()
+            ai_response = openai.Image.create(
+                prompt=img_request,
+                n=1,
+                size="1024x1024"
+            )
 
-    if url:
-        webbrowser.open(url, new=0, autoraise=True)
+            url = ai_response['data'][0]['url']
 
-except Exception as err:
-    print(err)
+            response = requests.get(url, proxies={"https": openai.proxy} if openai.proxy else None)
+            if response.content:
+                f = open(f"{os.getcwd()}\\images\\{img_request.replace(' ', '-').replace('.', '_')}.png", 'wb')
+                f.write(response.content)
+                f.close()
+
+            if url:
+                return webbrowser.open(url, new=0, autoraise=True)
+
+        except Exception as err:
+            print(err)
+            raise err
+
+
+if __name__ == '__main__':
+    img_request = "a dark alley in whitechapel, London in the late 1800's"
+    res = ImageGenerator.generate(img_request=img_request)
