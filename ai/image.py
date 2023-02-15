@@ -35,7 +35,8 @@ class ImageGenerator:
                 f.close()
 
             if url:
-                return webbrowser.open(url, new=0, autoraise=True)
+                return webbrowser.open(url)
+            return False
 
         except Exception as err:
             print(err)
@@ -43,5 +44,5 @@ class ImageGenerator:
 
 
 if __name__ == '__main__':
-    img_request = "a dark alley in whitechapel, London in the late 1800's"
-    res = ImageGenerator.generate(img_request=img_request)
+    img_request = "picture of something"
+    res = ImageGenerator().generate(img_request=img_request)
