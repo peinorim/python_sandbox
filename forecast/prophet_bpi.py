@@ -11,7 +11,7 @@ from datetime import datetime
 
 app = dash.Dash(__name__)
 
-START_DATE = "2017-03-25"
+START_DATE = "2020-03-25"
 PERIODS = 300
 
 
