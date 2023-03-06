@@ -18,7 +18,7 @@ cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
 PERIODS = 5
-MAX_DATE = "2023-02-22"
+MAX_DATE = "2023-03-06"
 EU = True
 GRAPHS = False
 
@@ -165,6 +165,7 @@ class History:
         if eu:
             url = "https://media.fdj.fr/static-draws/csv/euromillions/euromillions_202002.zip"
         data = ZipToData().zip_to_data(url=url, eu=eu)
+        data.reverse()
         self.eu = eu
         self.max_blue = 50 if not self.eu else 51
         self.max_red = 11 if not self.eu else 13
@@ -218,21 +219,34 @@ class History:
                             'last_out': None,
                             'out_percents': [],
                             'out_dates': [],
+                            'ecarts': [],
+                            'ecart_avg': None,
                             'forecast': None,
                             'prediction': None,
                         }
                     })
+
                 if number in draw.picked:
                     self.blue_stats[number]['nb_out'] += 1
                     self.blue_stats[number]['out_dates'].append(draw.date)
+                    self.blue_stats[number]['ecarts'].append(0)
+                else:
+                    if not self.blue_stats[number]['ecarts'] or self.blue_stats[number]['ecarts'][-1] == 0:
+                        self.blue_stats[number]['ecarts'].append(1)
+                    else:
+                        self.blue_stats[number]['ecarts'][-1] += 1
 
                 self.blue_stats[number]['out_percents'].append(
                     round((self.blue_stats[number]['nb_out'] / len(self.draws)) * 100, 2)
                 )
                 self.blue_stats[number]['out_dates'].sort()
                 self.blue_stats[number]['current_percent'] = self.blue_stats[number]['out_percents'][-1]
-                self.blue_stats[number]['last_out'] = self.blue_stats[number]['out_dates'][-1] if \
-                    self.blue_stats[number]['out_dates'] else None
+                self.blue_stats[number]['last_out'] = self.blue_stats[number]['out_dates'][-1] if self.blue_stats[number]['out_dates'] else None
+
+                tl = self.blue_stats[number]['ecarts']
+                temp_list = list(filter(lambda num: num != 0, tl))
+                if temp_list:
+                    self.blue_stats[number]['ecart_avg'] = round(sum(temp_list) / len(temp_list), 2)
 
             for number in range(1, self.max_red):
                 if not self.red_stats.get(number):
@@ -243,6 +257,7 @@ class History:
                             'last_out': None,
                             'out_percents': [],
                             'out_dates': [],
+                            'ecarts': [],
                             'forecast': None,
                             'prediction': None,
                         }
@@ -251,6 +266,12 @@ class History:
                         isinstance(draw.luck, list) and number in draw.luck:
                     self.red_stats[number]['nb_out'] += 1
                     self.red_stats[number]['out_dates'].append(draw.date)
+                    self.red_stats[number]['ecarts'].append(0)
+                else:
+                    if not self.red_stats[number]['ecarts'] or self.red_stats[number]['ecarts'][-1] == 0:
+                        self.red_stats[number]['ecarts'].append(1)
+                    else:
+                        self.red_stats[number]['ecarts'][-1] += 1
 
                 self.red_stats[number]['out_percents'].append(
                     round((self.red_stats[number]['nb_out'] / len(self.draws)) * 100, 2)
@@ -258,8 +279,12 @@ class History:
                 self.red_stats[number]['out_dates'].sort()
 
                 self.red_stats[number]['current_percent'] = self.red_stats[number]['out_percents'][-1]
-                self.red_stats[number]['last_out'] = self.red_stats[number]['out_dates'][-1] if self.red_stats[number][
-                    'out_dates'] else None
+                self.red_stats[number]['last_out'] = self.red_stats[number]['out_dates'][-1] if self.red_stats[number]['out_dates'] else None
+
+                tl = self.red_stats[number]['ecarts']
+                temp_list = list(filter(lambda num: num != 0, tl))
+                if temp_list:
+                    self.red_stats[number]['ecart_avg'] = round(sum(temp_list) / len(temp_list), 2)
 
             self.blue_stats = dict(sorted(self.blue_stats.items()))
             self.red_stats = dict(sorted(self.red_stats.items()))
@@ -275,7 +300,7 @@ class History:
             )
             self.blue_stats[number]['prediction'] = self.blue_stats[number]['forecast'][-1]
             print(
-                f"{number} - Last : {self.blue_stats[number]['last_out']:%Y-%m-%d} - {self.blue_stats[number]['current_percent']}% || {self.blue_stats[number]['forecast']}")
+                f"{number} - Last : {self.blue_stats[number]['last_out']:%Y-%m-%d} (écart actuel : {self.blue_stats[number]['ecarts'][-1]} vs {self.blue_stats[number]['ecart_avg']} moy) - {self.blue_stats[number]['current_percent']}% || {self.blue_stats[number]['forecast']}")
         print("###################################        RED        #######################################")
         for number in range(1, self.max_red):
             self.red_stats[number]['forecast'] = Forecast().get_forecast(
@@ -284,7 +309,7 @@ class History:
             )
             self.red_stats[number]['prediction'] = self.red_stats[number]['forecast'][-1]
             print(
-                f"{number} - Last : {self.red_stats[number]['last_out']:%Y-%m-%d} - {self.red_stats[number]['current_percent']}% || {self.red_stats[number]['forecast']}")
+                f"{number} - Last : {self.red_stats[number]['last_out']:%Y-%m-%d} (écart actuel : {self.red_stats[number]['ecarts'][-1]} vs {self.red_stats[number]['ecart_avg']} moy) - {self.red_stats[number]['current_percent']}% || {self.red_stats[number]['forecast']}")
 
 
 if __name__ == '__main__':
