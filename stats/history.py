@@ -39,10 +39,8 @@ class Forecast:
         future = m.make_future_dataframe(periods=PERIODS)
         future_values = list(m.predict(future).yhat.values)
         low_val = future_values[-PERIODS-1]
-        high_val = future_values[-3]
+        high_val = future_values[-2]
         return [
-            low_val,
-            high_val,
             round(((high_val - low_val) / abs(low_val)) * 100, 2)
         ]
 
@@ -299,8 +297,10 @@ class History:
                 percents=self.blue_stats.get(number).get('out_percents')
             )
             self.blue_stats[number]['prediction'] = self.blue_stats[number]['forecast'][-1]
+            print("| Chiffre |  Dér sortie  | %age sortie | Ecart actuel | Ecart moyen | Ec diff | Tendance %age")
             print(
-                f"{number} - Last : {self.blue_stats[number]['last_out']:%Y-%m-%d} (écart actuel : {self.blue_stats[number]['ecarts'][-1]} vs {self.blue_stats[number]['ecart_avg']} moy) - {self.blue_stats[number]['current_percent']}% || {self.blue_stats[number]['forecast']}")
+                f"|    {number}    |  {self.blue_stats[number]['last_out']:%Y-%m-%d}  |    {self.blue_stats[number]['current_percent']}%    |      {self.blue_stats[number]['ecarts'][-1]}      |    {self.blue_stats[number]['ecart_avg']}   |   {round(self.blue_stats[number]['ecarts'][-1] - self.blue_stats[number]['ecart_avg'], 2)}   |    {self.blue_stats[number]['forecast']}   |"
+            )
         print("###################################        RED        #######################################")
         for number in range(1, self.max_red):
             self.red_stats[number]['forecast'] = Forecast().get_forecast(
@@ -308,8 +308,10 @@ class History:
                 percents=self.red_stats.get(number).get('out_percents')
             )
             self.red_stats[number]['prediction'] = self.red_stats[number]['forecast'][-1]
+            print("| Chiffre |  Dér sortie  | %age sortie | Ecart actuel | Ecart moyen | Ec diff | Tendance %age")
             print(
-                f"{number} - Last : {self.red_stats[number]['last_out']:%Y-%m-%d} (écart actuel : {self.red_stats[number]['ecarts'][-1]} vs {self.red_stats[number]['ecart_avg']} moy) - {self.red_stats[number]['current_percent']}% || {self.red_stats[number]['forecast']}")
+                f"|    {number}    |  {self.red_stats[number]['last_out']:%Y-%m-%d}  |    {self.red_stats[number]['current_percent']}%    |      {self.red_stats[number]['ecarts'][-1]}      |    {self.red_stats[number]['ecart_avg']}   |   {round(self.red_stats[number]['ecarts'][-1] - self.red_stats[number]['ecart_avg'], 2)}   |    {self.red_stats[number]['forecast']}   |"
+            )
 
 
 if __name__ == '__main__':
