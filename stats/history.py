@@ -291,24 +291,24 @@ class History:
         print(
             f"###################################        LAST {'EU' if self.eu else 'FR'} : {self.all_dates[-1]:%Y-%m-%d} : {self.draws[-1].result}       #######################################")
         print("###################################        BLUE        #######################################")
+        print("| Chiffre |  Dér sortie  | %age sortie | Ecart actuel | Ecart moyen | Ec diff | Tendance %age")
         for number in range(1, self.max_blue):
             self.blue_stats[number]['forecast'] = Forecast().get_forecast(
                 dates=self.all_dates,
                 percents=self.blue_stats.get(number).get('out_percents')
             )
             self.blue_stats[number]['prediction'] = self.blue_stats[number]['forecast'][-1]
-            print("| Chiffre |  Dér sortie  | %age sortie | Ecart actuel | Ecart moyen | Ec diff | Tendance %age")
             print(
                 f"|    {number}    |  {self.blue_stats[number]['last_out']:%Y-%m-%d}  |    {self.blue_stats[number]['current_percent']}%    |      {self.blue_stats[number]['ecarts'][-1]}      |    {self.blue_stats[number]['ecart_avg']}   |   {round(self.blue_stats[number]['ecarts'][-1] - self.blue_stats[number]['ecart_avg'], 2)}   |    {self.blue_stats[number]['forecast']}   |"
             )
         print("###################################        RED        #######################################")
+        print("| Chiffre |  Dér sortie  | %age sortie | Ecart actuel | Ecart moyen | Ec diff | Tendance %age")
         for number in range(1, self.max_red):
             self.red_stats[number]['forecast'] = Forecast().get_forecast(
                 dates=self.all_dates,
                 percents=self.red_stats.get(number).get('out_percents')
             )
             self.red_stats[number]['prediction'] = self.red_stats[number]['forecast'][-1]
-            print("| Chiffre |  Dér sortie  | %age sortie | Ecart actuel | Ecart moyen | Ec diff | Tendance %age")
             print(
                 f"|    {number}    |  {self.red_stats[number]['last_out']:%Y-%m-%d}  |    {self.red_stats[number]['current_percent']}%    |      {self.red_stats[number]['ecarts'][-1]}      |    {self.red_stats[number]['ecart_avg']}   |   {round(self.red_stats[number]['ecarts'][-1] - self.red_stats[number]['ecart_avg'], 2)}   |    {self.red_stats[number]['forecast']}   |"
             )
