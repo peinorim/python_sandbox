@@ -14,6 +14,8 @@ from prophet.plot import plot_plotly
 from requests import RequestException
 import logging
 
+from texttable import Texttable
+
 cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
@@ -38,11 +40,9 @@ class Forecast:
         m.fit(self.format_forecast(dates=dates, percents=percents))
         future = m.make_future_dataframe(periods=PERIODS)
         future_values = list(m.predict(future).yhat.values)
-        low_val = future_values[-PERIODS-1]
+        low_val = future_values[-PERIODS - 1]
         high_val = future_values[-2]
-        return [
-            round(((high_val - low_val) / abs(low_val)) * 100, 2)
-        ]
+        return round(((high_val - low_val) / abs(low_val)) * 100, 2)
 
     def forecast_figure(self, dates=None, percents=None, title=None):
         m = Prophet()
@@ -127,13 +127,15 @@ class ZipToData:
 
             try:
                 response = requests.get(url, stream=True)
-                print("###################################        ONLINE MODE       #######################################")
+                print(
+                    "###################################        ONLINE MODE       #######################################")
                 z = zipfile.ZipFile(io.BytesIO(response.content))
                 file_data = z.read(z.infolist()[0])
                 self.__save_to_file(content=response.content, file_name=file_name)
                 z.close()
             except RequestException:
-                print("###################################        OFFLINE MODE       #######################################")
+                print(
+                    "###################################        OFFLINE MODE       #######################################")
                 archive = zipfile.ZipFile(file_name, 'r')
                 file_data = archive.read(list(archive.NameToInfo.keys())[0])
                 archive.close()
@@ -239,7 +241,8 @@ class History:
                 )
                 self.blue_stats[number]['out_dates'].sort()
                 self.blue_stats[number]['current_percent'] = self.blue_stats[number]['out_percents'][-1]
-                self.blue_stats[number]['last_out'] = self.blue_stats[number]['out_dates'][-1] if self.blue_stats[number]['out_dates'] else None
+                self.blue_stats[number]['last_out'] = self.blue_stats[number]['out_dates'][-1] if \
+                    self.blue_stats[number]['out_dates'] else None
 
                 tl = self.blue_stats[number]['ecarts']
                 temp_list = list(filter(lambda num: num != 0, tl))
@@ -277,7 +280,8 @@ class History:
                 self.red_stats[number]['out_dates'].sort()
 
                 self.red_stats[number]['current_percent'] = self.red_stats[number]['out_percents'][-1]
-                self.red_stats[number]['last_out'] = self.red_stats[number]['out_dates'][-1] if self.red_stats[number]['out_dates'] else None
+                self.red_stats[number]['last_out'] = self.red_stats[number]['out_dates'][-1] if self.red_stats[number][
+                    'out_dates'] else None
 
                 tl = self.red_stats[number]['ecarts']
                 temp_list = list(filter(lambda num: num != 0, tl))
@@ -288,30 +292,69 @@ class History:
             self.red_stats = dict(sorted(self.red_stats.items()))
 
     def get_predictions(self):
+        blue_table = Texttable()
+        blue_table.set_deco(Texttable.HEADER)
+        blue_table.set_max_width(1000)
+        blue_table.set_cols_align(["c", "c", "c", "c", "c", "c", "c"])
+        blue_table.set_cols_dtype(['i', 't', 't', 'f', 'f', 'f', 'f'])
+
         print(
             f"###################################        LAST {'EU' if self.eu else 'FR'} : {self.all_dates[-1]:%Y-%m-%d} : {self.draws[-1].result}       #######################################")
         print("###################################        BLUE        #######################################")
-        print("| Chiffre |  Dér sortie  | %age sortie | Ecart actuel | Ecart moyen | Ec diff | Tendance %age")
+        print()
+
+        blue_rows = []
+        row_names = ["Chiffre", "Der sortie", "%age sortie", "Ecart act", "Ecart moy", "Ec diff", "Tendance %age"]
+        blue_rows.append(row_names)
+
         for number in range(1, self.max_blue):
             self.blue_stats[number]['forecast'] = Forecast().get_forecast(
                 dates=self.all_dates,
                 percents=self.blue_stats.get(number).get('out_percents')
             )
-            self.blue_stats[number]['prediction'] = self.blue_stats[number]['forecast'][-1]
-            print(
-                f"|    {number}    |  {self.blue_stats[number]['last_out']:%Y-%m-%d}  |    {self.blue_stats[number]['current_percent']}%    |      {self.blue_stats[number]['ecarts'][-1]}      |    {self.blue_stats[number]['ecart_avg']}   |   {round(self.blue_stats[number]['ecarts'][-1] - self.blue_stats[number]['ecart_avg'], 2)}   |    {self.blue_stats[number]['forecast']}   |"
-            )
+            self.blue_stats[number]['prediction'] = self.blue_stats[number]['forecast']
+
+            blue_rows.append([
+                number,
+                f"{self.blue_stats[number]['last_out']:%Y-%m-%d}",
+                f"{self.blue_stats[number]['current_percent']}%",
+                self.blue_stats[number]['ecarts'][-1],
+                self.blue_stats[number]['ecart_avg'],
+                round(self.blue_stats[number]['ecarts'][-1] - self.blue_stats[number]['ecart_avg'], 2),
+                self.blue_stats[number]['forecast']
+            ])
+        blue_table.add_rows(blue_rows)
+        print(blue_table.draw())
+
+        print()
         print("###################################        RED        #######################################")
-        print("| Chiffre |  Dér sortie  | %age sortie | Ecart actuel | Ecart moyen | Ec diff | Tendance %age")
+        print()
+
+        red_table = Texttable()
+        red_table.set_deco(Texttable.HEADER)
+        red_table.set_max_width(1000)
+        red_table.set_cols_align(["c", "c", "c", "c", "c", "c", "c"])
+        red_table.set_cols_dtype(['i', 't', 't', 'f', 'f', 'f', 'f'])
+        red_rows = [row_names]
+
         for number in range(1, self.max_red):
             self.red_stats[number]['forecast'] = Forecast().get_forecast(
                 dates=self.all_dates,
                 percents=self.red_stats.get(number).get('out_percents')
             )
-            self.red_stats[number]['prediction'] = self.red_stats[number]['forecast'][-1]
-            print(
-                f"|    {number}    |  {self.red_stats[number]['last_out']:%Y-%m-%d}  |    {self.red_stats[number]['current_percent']}%    |      {self.red_stats[number]['ecarts'][-1]}      |    {self.red_stats[number]['ecart_avg']}   |   {round(self.red_stats[number]['ecarts'][-1] - self.red_stats[number]['ecart_avg'], 2)}   |    {self.red_stats[number]['forecast']}   |"
-            )
+            self.red_stats[number]['prediction'] = self.red_stats[number]['forecast']
+
+            red_rows.append([
+                number,
+                f"{self.red_stats[number]['last_out']:%Y-%m-%d}",
+                f"{self.red_stats[number]['current_percent']}%",
+                self.red_stats[number]['ecarts'][-1],
+                self.red_stats[number]['ecart_avg'],
+                round(self.red_stats[number]['ecarts'][-1] - self.red_stats[number]['ecart_avg'], 2),
+                self.red_stats[number]['forecast']
+            ])
+        red_table.add_rows(red_rows)
+        print(red_table.draw())
 
 
 if __name__ == '__main__':
