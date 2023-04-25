@@ -20,8 +20,8 @@ cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
 PERIODS = 5
-MAX_DATE = "2023-04-13"
-EU = False
+MAX_DATE = "2023-04-25"
+EU = True
 GRAPHS = False
 
 
