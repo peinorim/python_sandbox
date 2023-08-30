@@ -12,7 +12,7 @@ import plotly.graph_objects as go
 app = dash.Dash(__name__)
 
 STOCK = "ACA.PA"
-START_DATE = "2020-01-25"
+START_DATE = "2021-01-25"
 PERIODS = 200
 
 
