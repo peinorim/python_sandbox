@@ -12,9 +12,9 @@ import plotly.graph_objects as go
 
 app = dash.Dash(__name__)
 
-STOCK = "ACA.PA"
-START_DATE = "2021-01-25"
-PERIODS = 200
+STOCK = "SP5C.PA"
+START_DATE = "2019-01-01"
+PERIODS = 90
 
 
 def format_forecast(stock=None, start_date=None):
