@@ -31,7 +31,10 @@ class FearGreed:
 
     def get_data(self):
         try:
-            resp = requests.get(url=f"https://production.dataviz.cnn.io/index/fearandgreed/graphdata/{self.start_date}")
+            resp = requests.get(
+                url=f"https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2021-01-01",
+                headers={"user-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0", "content-type": "application/json"}
+            )
             resp.raise_for_status()
             return resp.json()
         except Exception as err:
@@ -62,6 +65,7 @@ class StockAPI:
 
         forecast_fig['layout']['showlegend'] = True
         forecast_fig['layout']['width'] = inf
+        forecast_fig['layout']['title'] = symbol
 
         forecast_fig.update_layout(
             xaxis=go.layout.XAxis(

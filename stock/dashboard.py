@@ -2,7 +2,7 @@ import dash
 from dash import html
 from dash import dcc
 import dash_bootstrap_components as dbc
-import plotly.graph_objects as go
+import dash_daq as daq
 
 from stock.finance import StockAPI, FearGreed
 
@@ -17,7 +17,7 @@ START_DATE = "2020-01-01"
 PERIODS = 90
 SYMBOLS = [
     "ACA.PA",
-    "AC.PA"
+    "AC.PA",
     "AI.PA",
     "BN.PA",
     "RI.PA",
@@ -41,13 +41,13 @@ for symbol in SYMBOLS:
 fear_greed = FearGreed(start_date=START_DATE)
 
 fear_greed_gauge = html.Div([
-    go.Figure(go.Indicator(
-        mode="gauge+number",
+    daq.Gauge(
         value=fear_greed.fear_and_greed_score,
-        domain={'x': [0, 1], 'y': [0, 1]},
-        title={'text': fear_greed.fear_and_greed_rating},
-        gauge={'axis': {'range': [None, 100]}}
-    )),
+        label=fear_greed.fear_and_greed_rating.title(),
+        max=100,
+        min=0,
+        showCurrentValue=True,
+    )
 ], className="col-md-6")
 
 fear_and_greed_previous = html.Div([
@@ -59,9 +59,8 @@ fear_and_greed_previous = html.Div([
 ], className="col-md-6")
 
 app.layout = dbc.Container([
-    stocks,
-    fear_greed_gauge,
-    fear_and_greed_previous
+    dbc.Row(stocks),
+    dbc.Row([fear_greed_gauge, fear_and_greed_previous]),
 ], fluid=True)
 
 if __name__ == '__main__':
