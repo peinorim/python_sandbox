@@ -1,4 +1,5 @@
 from datetime import datetime
+
 import yfinance as yf
 import dash
 from dash import html
@@ -18,11 +19,11 @@ PERIODS = 200
 
 def format_forecast(stock=None, start_date=None):
     forecast = {'ds': [], 'y': []}
+
     df = yf.download(stock, start=start_date, end=datetime.now().strftime("%Y-%m-%d"))
 
     forecast['ds'] = df.index.tz_localize(None).tolist()
     forecast['y'] = df.Close.tolist()
-    print("")
     return pd.DataFrame.from_dict(forecast)
 
 
