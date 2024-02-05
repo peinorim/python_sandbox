@@ -1,4 +1,3 @@
-import math
 from datetime import datetime
 from math import inf
 
@@ -21,12 +20,12 @@ class FearGreed:
         self.fear_and_greed_historical = self.data.get('fear_and_greed_historical')
         self.fear_and_greed_historical = self.data.get('market_momentum_sp500')
 
-        self.fear_and_greed_score = math.ceil(self.fear_and_greed.get('score'))
+        self.fear_and_greed_score = round(self.fear_and_greed.get('score'))
         self.fear_and_greed_rating = self.fear_and_greed.get('rating')
-        self.fear_and_greed_previous_close = self.fear_and_greed.get('previous_close')
-        self.fear_and_greed_previous_1_week = self.fear_and_greed.get('previous_1_week')
-        self.fear_and_greed_previous_1_month = self.fear_and_greed.get('previous_1_month')
-        self.fear_and_greed_previous_1_year = self.fear_and_greed.get('previous_1_year')
+        self.fear_and_greed_previous_close = round(self.fear_and_greed.get('previous_close'))
+        self.fear_and_greed_previous_1_week = round(self.fear_and_greed.get('previous_1_week'))
+        self.fear_and_greed_previous_1_month = round(self.fear_and_greed.get('previous_1_month'))
+        self.fear_and_greed_previous_1_year = round(self.fear_and_greed.get('previous_1_year'))
 
         self.fear_and_greed_historical_data = self.data.get('fear_and_greed_historical').get('data')
 
