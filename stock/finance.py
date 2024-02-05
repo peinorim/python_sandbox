@@ -1,7 +1,9 @@
+import math
 from datetime import datetime
 from math import inf
 
 import pandas as pd
+import requests
 import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
@@ -10,7 +12,35 @@ import plotly.graph_objects as go
 DATE_FORMAT = "%Y-%m-%d"
 
 
-class FinanceApi:
+class FearGreed:
+
+    def __init__(self, start_date: str = None):
+        self.start_date = start_date
+        self.data = self.get_data()
+        self.fear_and_greed = self.data.get('fear_and_greed')
+        self.fear_and_greed_historical = self.data.get('fear_and_greed_historical')
+        self.fear_and_greed_historical = self.data.get('market_momentum_sp500')
+
+        self.fear_and_greed_score = math.ceil(self.fear_and_greed.get('score'))
+        self.fear_and_greed_rating = self.fear_and_greed.get('rating')
+        self.fear_and_greed_previous_close = self.fear_and_greed.get('previous_close')
+        self.fear_and_greed_previous_1_week = self.fear_and_greed.get('previous_1_week')
+        self.fear_and_greed_previous_1_month = self.fear_and_greed.get('previous_1_month')
+        self.fear_and_greed_previous_1_year = self.fear_and_greed.get('previous_1_year')
+
+        self.fear_and_greed_historical_data = self.data.get('fear_and_greed_historical').get('data')
+
+    def get_data(self):
+        try:
+            resp = requests.get(url=f"https://production.dataviz.cnn.io/index/fearandgreed/graphdata/{self.start_date}")
+            resp.raise_for_status()
+            return resp.json()
+        except Exception as err:
+            print(err)
+            raise err
+
+
+class StockAPI:
 
     def get_stock_data(self, symbol: str = None, start_date: str = None):
         try:
@@ -69,8 +99,8 @@ class FinanceApi:
 
 
 if __name__ == "__main__":
-    api = FinanceApi()
+    api = StockAPI()
     symbol = "SP5C.PA"
     start_date = "2020-01-01"
 
-    data = FinanceApi().get_stock_data(symbol=symbol, start_date=start_date)
+    data = StockAPI().get_stock_data(symbol=symbol, start_date=start_date)
