@@ -43,10 +43,11 @@ fear_greed = FearGreed(start_date=START_DATE)
 fear_greed_gauge = html.Div([
     daq.Gauge(
         value=fear_greed.fear_and_greed_score,
-        label=fear_greed.fear_and_greed_rating.title(),
+        label=fear_greed.fear_and_greed_rating.upper(),
         max=100,
         min=0,
         showCurrentValue=True,
+        color={"gradient": True, "ranges": {"red": [0, 25], "yellow": [25, 75], "green": [75, 100]}},
     )
 ], className="col-md-6")
 
