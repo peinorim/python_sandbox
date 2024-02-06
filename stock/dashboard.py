@@ -49,7 +49,7 @@ fear_greed_gauge = html.Div([
         showCurrentValue=True,
         color={"gradient": True, "ranges": {"red": [0, 25], "yellow": [25, 75], "green": [75, 100]}},
     )
-], className="col-md-6")
+], className="col-md-4")
 
 fear_and_greed_previous = html.Div([
     html.H4(["previous_close", dbc.Badge(fear_greed.fear_and_greed_previous_close, className="ms-1")]),
@@ -57,11 +57,11 @@ fear_and_greed_previous = html.Div([
     html.H4(["previous_1_month", dbc.Badge(fear_greed.fear_and_greed_previous_1_month, className="ms-1")]),
     html.H4(["previous_1_year", dbc.Badge(fear_greed.fear_and_greed_previous_1_year, className="ms-1")]),
 
-], className="col-md-6")
+], className="col-md-4")
 
 app.layout = dbc.Container([
+    dbc.Row([html.Div(className="col-md-4"),fear_greed_gauge, fear_and_greed_previous,html.Div(className="col-md-4"),]),
     dbc.Row(stocks),
-    dbc.Row([fear_greed_gauge, fear_and_greed_previous]),
 ], fluid=True)
 
 if __name__ == '__main__':
