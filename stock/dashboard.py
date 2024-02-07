@@ -5,6 +5,7 @@ import dash_bootstrap_components as dbc
 import dash_daq as daq
 
 from stock.finance import StockAPI, FearGreed
+from stock.forecast import Forecast
 
 # https://dash.plotly.com/dash-core-components/graph
 # https://bootswatch.com/darkly/
@@ -30,7 +31,9 @@ stocks = []
 
 for symbol in SYMBOLS:
     api = StockAPI()
-    figure = StockAPI().forecast_figure(symbol=symbol, start_date=START_DATE, periods=PERIODS)
+    forecast = Forecast()
+    data = StockAPI().get_stock_data(symbol=symbol, start_date=START_DATE)
+    figure = forecast.render_figure(symbol=symbol, data=data, periods=PERIODS)
 
     stocks.append(
         html.Div(children=[
@@ -60,7 +63,8 @@ fear_and_greed_previous = html.Div([
 ], className="col-md-4")
 
 app.layout = dbc.Container([
-    dbc.Row([html.Div(className="col-md-4"),fear_greed_gauge, fear_and_greed_previous,html.Div(className="col-md-4"),]),
+    dbc.Row(
+        [html.Div(className="col-md-4"), fear_greed_gauge, fear_and_greed_previous, html.Div(className="col-md-4"), ]),
     dbc.Row(stocks),
 ], fluid=True)
 

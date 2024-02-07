@@ -33,7 +33,8 @@ class FearGreed:
         try:
             resp = requests.get(
                 url=f"https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2021-01-01",
-                headers={"user-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0", "content-type": "application/json"}
+                headers={"user-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0",
+                         "content-type": "application/json"}
             )
             resp.raise_for_status()
             return resp.json()
@@ -54,51 +55,6 @@ class StockAPI:
         except Exception as err:
             print(err)
             raise err
-
-    def forecast_figure(self, symbol=None, start_date=None, periods=None):
-        m = Prophet()
-        m.fit(self.get_stock_data(symbol=symbol, start_date=start_date))
-        future = m.make_future_dataframe(periods=periods)
-        forecast = m.predict(future)
-
-        forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=False, changepoints=True)
-
-        forecast_fig['layout']['showlegend'] = True
-        forecast_fig['layout']['width'] = inf
-        forecast_fig['layout']['title'] = symbol
-
-        forecast_fig.update_layout(
-            xaxis=go.layout.XAxis(
-                tickformat="%d/%m/%Y",
-                rangeselector=dict(
-                    buttons=list([
-                        dict(count=1,
-                             label="1m",
-                             step="month",
-                             stepmode="backward"),
-                        dict(count=6,
-                             label="6m",
-                             step="month",
-                             stepmode="backward"),
-                        dict(count=1,
-                             label="YTD",
-                             step="year",
-                             stepmode="todate"),
-                        dict(count=1,
-                             label="1y",
-                             step="year",
-                             stepmode="backward"),
-                        dict(step="all", label="tout")
-                    ])
-                ),
-                rangeslider=dict(
-                    visible=True
-                ),
-                type="date"
-            ),
-            yaxis=dict(showgrid=True),
-        )
-        return forecast_fig
 
 
 if __name__ == "__main__":
