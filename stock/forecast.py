@@ -1,3 +1,10 @@
+from math import inf
+
+from prophet import Prophet
+from prophet.plot import plot_plotly
+import plotly.graph_objects as go
+
+
 class Forecast:
 
     def render_figure(self, symbol: str = None, data=None, periods=None):

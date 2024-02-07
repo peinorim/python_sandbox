@@ -1,12 +1,8 @@
 from datetime import datetime
-from math import inf
 
 import pandas as pd
 import requests
 import yfinance as yf
-from prophet import Prophet
-from prophet.plot import plot_plotly
-import plotly.graph_objects as go
 
 DATE_FORMAT = "%Y-%m-%d"
 
