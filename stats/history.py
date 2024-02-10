@@ -20,7 +20,7 @@ cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
 PERIODS = 5
-MAX_DATE = "2024-01-25"
+MAX_DATE = "2024-02-10"
 EU = False
 GRAPHS = False
 
@@ -39,7 +39,7 @@ class Forecast:
         m = Prophet()
         m.fit(self.format_forecast(dates=dates, percents=percents))
         future = m.make_future_dataframe(periods=PERIODS)
-        future_values = list(m.predict(future).yhat.values)
+        future_values = m.predict(future).yhat.to_list()
         low_val = future_values[-PERIODS - 1]
         high_val = future_values[-1]
         return round(((high_val - low_val) / abs(low_val)) * 100, 2)
