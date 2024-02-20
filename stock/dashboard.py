@@ -21,11 +21,11 @@ SYMBOLS = [
     "AC.PA",
     "AI.PA",
     "BN.PA",
-    "RI.PA",
     "SU.PA",
     "SW.PA",
     "TTE.PA",
-    "SP5C.PA"
+    "SP5C.PA",
+    "CHIP.PA"
 ]
 stocks = []
 
