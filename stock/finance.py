@@ -24,6 +24,8 @@ class FearGreed:
         self.fear_and_greed_previous_1_year = round(self.fear_and_greed.get('previous_1_year'))
 
         self.fear_and_greed_historical_data = self.data.get('fear_and_greed_historical').get('data')
+        self.market_volatility_vix_data = self.data.get('market_volatility_vix').get('data')
+        self.market_momentum_sp500_data = self.data.get('market_momentum_sp500').get('data')
 
     def get_data(self):
         try:
@@ -34,6 +36,20 @@ class FearGreed:
             )
             resp.raise_for_status()
             return resp.json()
+        except Exception as err:
+            print(err)
+            raise err
+
+    def format_indice_data(self, indice_name: str = None):
+        try:
+            indice_data = self.data.get(indice_name).get('data')
+            forecast = {'ds': [], 'y': []}
+            for item in indice_data:
+                dt_object = datetime.fromtimestamp(round(int(item.get('x'))/1000))
+                forecast['ds'].append(dt_object)
+                forecast['y'].append(int(item.get('y')))
+
+            return pd.DataFrame.from_dict(forecast)
         except Exception as err:
             print(err)
             raise err
@@ -51,6 +67,8 @@ class StockAPI:
         except Exception as err:
             print(err)
             raise err
+
+
 
 
 if __name__ == "__main__":
