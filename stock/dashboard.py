@@ -25,7 +25,8 @@ SYMBOLS = [
     "SW.PA",
     "TTE.PA",
     "SP5C.PA",
-    "CHIP.PA"
+    "CHIP.PA",
+    "TPXY.PA"
 ]
 stocks = []
 forecast = Forecast()
