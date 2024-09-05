@@ -20,8 +20,8 @@ cmdstanpy_logger = logging.getLogger("cmdstanpy")
 cmdstanpy_logger.disabled = True
 
 PERIODS = 5
-MAX_DATE = "2024-04-22"
-EU = True
+MAX_DATE = "2024-09-05"
+EU = False
 GRAPHS = False
 
 
@@ -41,7 +41,7 @@ class Forecast:
         future = m.make_future_dataframe(periods=PERIODS)
         future_values = m.predict(future).yhat.to_list()
         low_val = future_values[-PERIODS - 1]
-        high_val = future_values[-2]
+        high_val = future_values[-3]
         return round(((high_val - low_val) / abs(low_val)) * 100, 2)
 
     def forecast_figure(self, dates=None, percents=None, title=None):
@@ -161,9 +161,9 @@ class History:
 
     def __init__(self, eu=False, max_date=None):
 
-        url = "https://media.fdj.fr/static-draws/csv/loto/loto_201911.zip"
+        url = "https://www.sto.api.fdj.fr/anonymous/service-draw-info/v3/documentations/1a2b3c4d-9876-4562-b3fc-2c963f66afp6"
         if eu:
-            url = "https://media.fdj.fr/static-draws/csv/euromillions/euromillions_202002.zip"
+            url = "https://www.sto.api.fdj.fr/anonymous/service-draw-info/v3/documentations/1a2b3c4d-9876-4562-b3fc-2c963f66afe6"
         data = ZipToData().zip_to_data(url=url, eu=eu)
         data.reverse()
         self.eu = eu

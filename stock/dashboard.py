@@ -18,12 +18,12 @@ START_DATE = "2020-01-01"
 PERIODS = 90
 SYMBOLS = [
     "ACA.PA",
-    "CSPX.AS",
-    "CHIP.PA",
-    "TPXY.PA",
     "NDIA.AS",
-    "GOLD.AS",
-    "COMO.PA"
+    "GC=F",
+    "TSLA",
+    "NVDA",
+    "EURUSD=X",
+    "DX-Y.NYB"
 ]
 stocks = []
 forecast = Forecast()

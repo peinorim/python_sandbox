@@ -18,7 +18,7 @@ def calculate_portfolio_performance(stock1, stock2, gold, start, end):
     # Calculer les rendements journaliers
     returns = data.pct_change().dropna()
     # Définir les poids du portefeuille
-    weights = [0.5, 0.25, 0.25]  # 2/3 d'actions et 1/3 d'or
+    weights = [0.5, 0.2, 0.3]  # 2/3 d'actions et 1/3 d'or
     # Calculer les rendements du portefeuille
     portfolio_returns = returns.dot(weights)
     # Calculer la valeur cumulée du portefeuille en démarrant à 100
@@ -68,7 +68,7 @@ app.layout = dbc.Container([
                     )
                 ],
                 'layout': go.Layout(
-                    title='Portfolio Performance vs S&P 500',
+                    title='Valinor Fund Performance vs S&P 500',
                     xaxis={'title': 'Date'},
                     yaxis={'title': 'Cumulative Returns'},
                     legend={'x': 0, 'y': 1},
