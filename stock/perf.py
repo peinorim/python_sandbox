@@ -12,13 +12,13 @@ def download_data(tickers, start, end):
     return data['Adj Close']
 
 
-def calculate_portfolio_performance(stock1, stock2, gold, start, end):
+def calculate_portfolio_performance(stocks: dict = None, start_date: str = None, end_date: str = None):
     # Télécharger les données
-    data = download_data([stock1, stock2, gold], start, end)
+    data = download_data(list(stocks.keys()), start_date, end_date)
     # Calculer les rendements journaliers
     returns = data.pct_change().dropna()
     # Définir les poids du portefeuille
-    weights = [0.5, 0.2, 0.3]  # 2/3 d'actions et 1/3 d'or
+    weights = list(stocks.values())
     # Calculer les rendements du portefeuille
     portfolio_returns = returns.dot(weights)
     # Calculer la valeur cumulée du portefeuille en démarrant à 100
@@ -35,15 +35,17 @@ def calculate_sp500_performance(start, end):
 
 
 # Définir les tickers pour les actions et l'or
-stock1 = 'CSPX.L'
-stock2 = 'NDIA.L'
-gold = 'GLDD.L'
+stocks = {
+    'CSPX.L': 0.6,
+    'NDIA.L': 0.1,
+    'GLDD.L': 0.3,
+}
 
 # Définir la période d'analyse
 start_date = '2024-01-01'
 end_date = datetime.today().strftime('%Y-%m-%d')
 
-portfolio_value = calculate_portfolio_performance(stock1, stock2, gold, start_date, end_date)
+portfolio_value = calculate_portfolio_performance(stocks=stocks, start_date=start_date, end_date=end_date)
 sp500_value = calculate_sp500_performance(start_date, end_date)
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])

@@ -22,8 +22,7 @@ SYMBOLS = [
     "GC=F",
     "TSLA",
     "NVDA",
-    "EURUSD=X",
-    "DX-Y.NYB"
+    "BTC-USD"
 ]
 stocks = []
 forecast = Forecast()
