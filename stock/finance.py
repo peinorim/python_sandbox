@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pandas as pd
 import requests
@@ -60,7 +60,7 @@ class StockAPI:
     def get_stock_data(self, symbol: str = None, start_date: str = None):
         try:
             forecast = {'ds': [], 'y': []}
-            data = yf.download(symbol, start=start_date, end=datetime.now().strftime("%Y-%m-%d"))
+            data = yf.download(symbol, start=start_date, end=(datetime.now()+ timedelta(days=1)).strftime("%Y-%m-%d"))
             forecast['ds'] = data.index.tz_localize(None).tolist()
             forecast['y'] = data.Close.tolist()
             return pd.DataFrame.from_dict(forecast)

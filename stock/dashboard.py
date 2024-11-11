@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import dash
 from dash import html
 from dash import dcc
@@ -15,13 +17,16 @@ from stock.forecast import Forecast
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 START_DATE = "2020-01-01"
+# START_DATE = (datetime.today() - timedelta(days=200)).strftime("%Y-%m-%d")
 PERIODS = 90
 SYMBOLS = [
     "ACA.PA",
+    "AASI.PA",
     "NDIA.AS",
     "GC=F",
     "TSLA",
     "NVDA",
+    "EURUSD=X",
     "BTC-USD"
 ]
 stocks = []

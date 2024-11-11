@@ -36,9 +36,9 @@ def calculate_sp500_performance(start, end):
 
 # Définir les tickers pour les actions et l'or
 stocks = {
-    'CSPX.L': 0.6,
+    'CSPX.L': 0.5,
     'NDIA.L': 0.1,
-    'GLDD.L': 0.3,
+    'GLDD.L': 0.4,
 }
 
 # Définir la période d'analyse
