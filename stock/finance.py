@@ -45,7 +45,7 @@ class FearGreed:
             indice_data = self.data.get(indice_name).get('data')
             forecast = {'ds': [], 'y': []}
             for item in indice_data:
-                dt_object = datetime.fromtimestamp(round(int(item.get('x'))/1000))
+                dt_object = datetime.fromtimestamp(round(int(item.get('x')) / 1000))
                 forecast['ds'].append(dt_object)
                 forecast['y'].append(int(item.get('y')))
 
@@ -60,15 +60,13 @@ class StockAPI:
     def get_stock_data(self, symbol: str = None, start_date: str = None):
         try:
             forecast = {'ds': [], 'y': []}
-            data = yf.download(symbol, start=start_date, end=(datetime.now()+ timedelta(days=1)).strftime("%Y-%m-%d"))
+            data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"))
             forecast['ds'] = data.index.tz_localize(None).tolist()
             forecast['y'] = data.Close.tolist()
             return pd.DataFrame.from_dict(forecast)
         except Exception as err:
             print(err)
             raise err
-
-
 
 
 if __name__ == "__main__":
