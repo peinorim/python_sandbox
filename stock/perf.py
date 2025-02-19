@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import dash
 from dash import dcc, html
@@ -36,14 +36,13 @@ def calculate_sp500_performance(start, end):
 
 # Définir les tickers pour les actions et l'or
 stocks = {
-    'CSPX.L': 0.5,
-    'NDIA.L': 0.1,
-    'GLDD.L': 0.4,
+    'CSPX.L': 0.7,
+    'GLDD.L': 0.3,
 }
 
 # Définir la période d'analyse
 start_date = '2024-01-01'
-end_date = datetime.today().strftime('%Y-%m-%d')
+end_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
 portfolio_value = calculate_portfolio_performance(stocks=stocks, start_date=start_date, end_date=end_date)
 sp500_value = calculate_sp500_performance(start_date, end_date)

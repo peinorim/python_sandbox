@@ -62,7 +62,7 @@ class StockAPI:
             forecast = {'ds': [], 'y': []}
             data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"))
             forecast['ds'] = data.index.tz_localize(None).tolist()
-            forecast['y'] = data.Close.tolist()
+            forecast['y'] = data.Close.stack().tolist()
             return pd.DataFrame.from_dict(forecast)
         except Exception as err:
             print(err)

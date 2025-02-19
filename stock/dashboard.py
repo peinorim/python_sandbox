@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-
 import dash
 from dash import html
 from dash import dcc
@@ -21,8 +19,9 @@ START_DATE = "2020-01-01"
 PERIODS = 90
 SYMBOLS = [
     "ACA.PA",
-    "AASI.PA",
-    "NDIA.AS",
+    "CSPX.AS",
+    "FXAC.AS",
+    "WPEA.PA",
     "GC=F",
     "TSLA",
     "NVDA",
