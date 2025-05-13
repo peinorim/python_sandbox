@@ -9,7 +9,7 @@ import plotly.graph_objs as go
 
 def download_data(tickers, start, end):
     data = yf.download(tickers, start=start, end=end)
-    return data['Adj Close']
+    return data['Close']
 
 
 def calculate_portfolio_performance(stocks: dict = None, start_date: str = None, end_date: str = None):

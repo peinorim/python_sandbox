@@ -20,12 +20,16 @@ PERIODS = 90
 SYMBOLS = [
     "ACA.PA",
     "CSPX.AS",
+    "CW8.PA",
+    "PAASI.PA",
+    "IDVA.AS",
     "FXAC.AS",
-    "WPEA.PA",
+    "CEMG.AS",
+    "ISOE.AS",
+    "^SPX",
     "GC=F",
-    "TSLA",
-    "NVDA",
     "EURUSD=X",
+    "DX-Y.NYB",
     "BTC-USD"
 ]
 stocks = []
@@ -44,14 +48,6 @@ for symbol in SYMBOLS:
     )
 
 fear_greed = FearGreed(start_date=START_DATE)
-market_momentum_sp500_data = fear_greed.format_indice_data(indice_name="market_momentum_sp500")
-market_momentum_sp500_forecast = forecast.render_figure(symbol="S&P500", data=market_momentum_sp500_data,
-                                                        periods=PERIODS)
-stocks.append(
-    html.Div(children=[
-        dcc.Graph(id=f'forecast-sp500', figure=market_momentum_sp500_forecast)
-    ], className='col-md-6')
-)
 vix_data = fear_greed.format_indice_data(indice_name="market_volatility_vix")
 vix_forecast = forecast.render_figure(symbol="VIX", data=vix_data, periods=PERIODS)
 stocks.append(
@@ -86,4 +82,4 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run(debug=True)
