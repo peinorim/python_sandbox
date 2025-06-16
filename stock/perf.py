@@ -25,19 +25,13 @@ def calculate_portfolio_performance(stocks: dict = None, start_date: str = None,
     return 100 * (1 + portfolio_returns).cumprod()
 
 
-def calculate_sp500_performance(start, end):
-    # Télécharger les données du S&P 500
-    sp500_data = download_data('^GSPC', start, end)
-    # Calculer les rendements journaliers
-    sp500_returns = sp500_data.pct_change().dropna()
-    # Calculer la valeur cumulée du S&P 500 en démarrant à 100
-    return 100 * (1 + sp500_returns).cumprod()
-
-
 # Définir les tickers pour les actions et l'or
+references = {
+    'CSPX.AS': 1,
+}
 stocks = {
-    'CSPX.L': 0.7,
-    'GLDD.L': 0.3,
+    'CSPX.AS': 0.7,
+    'GOLD.MI': 0.3,
 }
 
 # Définir la période d'analyse
@@ -45,7 +39,7 @@ start_date = '2024-01-01'
 end_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
 portfolio_value = calculate_portfolio_performance(stocks=stocks, start_date=start_date, end_date=end_date)
-sp500_value = calculate_sp500_performance(start_date, end_date)
+sp500_value = calculate_portfolio_performance(stocks=references, start_date=start_date, end_date=end_date)
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 app.layout = dbc.Container([
@@ -82,4 +76,4 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run(debug=True)
