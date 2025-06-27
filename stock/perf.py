@@ -26,8 +26,14 @@ def calculate_portfolio_performance(stocks: dict = None, start_date: str = None,
 
 
 # Définir les tickers pour les actions et l'or
-references = {
+sp500 = {
     'CSPX.AS': 1,
+}
+msci_world = {
+    'CW8.PA': 1,
+}
+nasdaq = {
+    'CNDX.AS': 1,
 }
 stocks = {
     'CSPX.AS': 0.7,
@@ -39,7 +45,9 @@ start_date = '2024-01-01'
 end_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
 portfolio_value = calculate_portfolio_performance(stocks=stocks, start_date=start_date, end_date=end_date)
-sp500_value = calculate_portfolio_performance(stocks=references, start_date=start_date, end_date=end_date)
+sp500_value = calculate_portfolio_performance(stocks=sp500, start_date=start_date, end_date=end_date)
+msci_world_value = calculate_portfolio_performance(stocks=msci_world, start_date=start_date, end_date=end_date)
+nasdaq_value = calculate_portfolio_performance(stocks=nasdaq, start_date=start_date, end_date=end_date)
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 app.layout = dbc.Container([
@@ -53,17 +61,29 @@ app.layout = dbc.Container([
                         x=portfolio_value.index,
                         y=portfolio_value,
                         mode='lines',
-                        name='Portfolio'
+                        name='Valinor'
                     ),
                     go.Scatter(
                         x=sp500_value.index,
                         y=sp500_value,
                         mode='lines',
                         name='S&P 500'
+                    ),
+                    go.Scatter(
+                        x=msci_world_value.index,
+                        y=msci_world_value,
+                        mode='lines',
+                        name='MSCI World'
+                    ),
+                    go.Scatter(
+                        x=nasdaq_value.index,
+                        y=nasdaq_value,
+                        mode='lines',
+                        name='NASDAQ'
                     )
                 ],
                 'layout': go.Layout(
-                    title='Valinor Fund Performance vs S&P 500',
+                    title='Valinor Fund Performance',
                     xaxis={'title': 'Date'},
                     yaxis={'title': 'Cumulative Returns'},
                     legend={'x': 0, 'y': 1},
