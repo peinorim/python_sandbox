@@ -35,7 +35,16 @@ msci_world = {
 nasdaq = {
     'CNDX.AS': 1,
 }
-stocks = {
+emu = {
+    'MFEC.PA': 1,
+}
+idl = {
+    'GOLD.MI': 0.25,
+    'JPYEUR=X': 0.25,
+    'NRGW.PA': 0.25,
+    'ACUU.DE': 0.25,
+}
+valinor = {
     'CSPX.AS': 0.7,
     'GOLD.MI': 0.3,
 }
@@ -44,10 +53,12 @@ stocks = {
 start_date = '2024-01-01'
 end_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
-portfolio_value = calculate_portfolio_performance(stocks=stocks, start_date=start_date, end_date=end_date)
+valinor_value = calculate_portfolio_performance(stocks=valinor, start_date=start_date, end_date=end_date)
 sp500_value = calculate_portfolio_performance(stocks=sp500, start_date=start_date, end_date=end_date)
 msci_world_value = calculate_portfolio_performance(stocks=msci_world, start_date=start_date, end_date=end_date)
 nasdaq_value = calculate_portfolio_performance(stocks=nasdaq, start_date=start_date, end_date=end_date)
+emu_value = calculate_portfolio_performance(stocks=emu, start_date=start_date, end_date=end_date)
+idl_value = calculate_portfolio_performance(stocks=idl, start_date=start_date, end_date=end_date)
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 app.layout = dbc.Container([
@@ -58,8 +69,8 @@ app.layout = dbc.Container([
             figure={
                 'data': [
                     go.Scatter(
-                        x=portfolio_value.index,
-                        y=portfolio_value,
+                        x=valinor_value.index,
+                        y=valinor_value,
                         mode='lines',
                         name='Valinor'
                     ),
@@ -80,6 +91,18 @@ app.layout = dbc.Container([
                         y=nasdaq_value,
                         mode='lines',
                         name='NASDAQ'
+                    ),
+                    go.Scatter(
+                        x=emu_value.index,
+                        y=emu_value,
+                        mode='lines',
+                        name='EMU'
+                    ),
+                    go.Scatter(
+                        x=idl_value.index,
+                        y=idl_value,
+                        mode='lines',
+                        name='IDL'
                     )
                 ],
                 'layout': go.Layout(

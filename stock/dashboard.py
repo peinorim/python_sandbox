@@ -26,7 +26,7 @@ SYMBOLS = [
     "FXAC.AS",
     "CEMG.AS",
     "ISOE.AS",
-    "AINF.AS",
+    "AINF.MI",
     "^SPX",
     "GC=F",
     "EURUSD=X",
