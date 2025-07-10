@@ -23,15 +23,13 @@ SYMBOLS = [
     "CW8.PA",
     "PAASI.PA",
     "IDVA.AS",
-    "FXAC.AS",
-    "CEMG.AS",
     "ISOE.AS",
-    "AINF.MI",
     "^SPX",
     "GC=F",
     "EURUSD=X",
     "DX-Y.NYB",
-    "BTC-USD"
+    "BTC-USD",
+    "BTC-EUR"
 ]
 stocks = []
 forecast = Forecast()

@@ -38,6 +38,9 @@ nasdaq = {
 emu = {
     'MFEC.PA': 1,
 }
+btc = {
+    'BTC-EUR': 1,
+}
 idl = {
     'GOLD.MI': 0.25,
     'JPYEUR=X': 0.25,
@@ -45,8 +48,9 @@ idl = {
     'ACUU.DE': 0.25,
 }
 valinor = {
-    'CSPX.AS': 0.7,
-    'GOLD.MI': 0.3,
+    'CSPX.AS': 0.68,
+    'ISOE.AS': 0.05,
+    'GOLD.MI': 0.27,
 }
 
 # Définir la période d'analyse
@@ -58,6 +62,7 @@ sp500_value = calculate_portfolio_performance(stocks=sp500, start_date=start_dat
 msci_world_value = calculate_portfolio_performance(stocks=msci_world, start_date=start_date, end_date=end_date)
 nasdaq_value = calculate_portfolio_performance(stocks=nasdaq, start_date=start_date, end_date=end_date)
 emu_value = calculate_portfolio_performance(stocks=emu, start_date=start_date, end_date=end_date)
+btc_value = calculate_portfolio_performance(stocks=btc, start_date=start_date, end_date=end_date)
 idl_value = calculate_portfolio_performance(stocks=idl, start_date=start_date, end_date=end_date)
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
@@ -84,7 +89,7 @@ app.layout = dbc.Container([
                         x=msci_world_value.index,
                         y=msci_world_value,
                         mode='lines',
-                        name='MSCI World'
+                        name='World'
                     ),
                     go.Scatter(
                         x=nasdaq_value.index,
@@ -99,6 +104,13 @@ app.layout = dbc.Container([
                         name='EMU'
                     ),
                     go.Scatter(
+                        x=btc_value.index,
+                        y=btc_value,
+                        mode='lines',
+                        selected=False,
+                        name='BTC'
+                    ),
+                    go.Scatter(
                         x=idl_value.index,
                         y=idl_value,
                         mode='lines',
@@ -106,7 +118,7 @@ app.layout = dbc.Container([
                     )
                 ],
                 'layout': go.Layout(
-                    title='Valinor Fund Performance',
+                    title='Valinor Performance',
                     xaxis={'title': 'Date'},
                     yaxis={'title': 'Cumulative Returns'},
                     legend={'x': 0, 'y': 1},
