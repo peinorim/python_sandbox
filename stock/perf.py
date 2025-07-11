@@ -38,9 +38,6 @@ nasdaq = {
 emu = {
     'MFEC.PA': 1,
 }
-btc = {
-    'BTC-EUR': 1,
-}
 idl = {
     'GOLD.MI': 0.25,
     'JPYEUR=X': 0.25,
@@ -62,7 +59,6 @@ sp500_value = calculate_portfolio_performance(stocks=sp500, start_date=start_dat
 msci_world_value = calculate_portfolio_performance(stocks=msci_world, start_date=start_date, end_date=end_date)
 nasdaq_value = calculate_portfolio_performance(stocks=nasdaq, start_date=start_date, end_date=end_date)
 emu_value = calculate_portfolio_performance(stocks=emu, start_date=start_date, end_date=end_date)
-btc_value = calculate_portfolio_performance(stocks=btc, start_date=start_date, end_date=end_date)
 idl_value = calculate_portfolio_performance(stocks=idl, start_date=start_date, end_date=end_date)
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
@@ -102,13 +98,6 @@ app.layout = dbc.Container([
                         y=emu_value,
                         mode='lines',
                         name='EMU'
-                    ),
-                    go.Scatter(
-                        x=btc_value.index,
-                        y=btc_value,
-                        mode='lines',
-                        selected=False,
-                        name='BTC'
                     ),
                     go.Scatter(
                         x=idl_value.index,
