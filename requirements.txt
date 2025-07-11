@@ -2,8 +2,8 @@ requests
 dash
 dash-bootstrap-components
 pandas
-prophet
 plotly
 yfinance
 texttable
 dash_daq
+u8darts[all]
