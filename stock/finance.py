@@ -3,6 +3,9 @@ from datetime import datetime, timedelta
 import pandas as pd
 import requests
 import yfinance as yf
+from dash import html, dcc
+
+from stock.forecast import Forecast
 
 DATE_FORMAT = "%Y-%m-%d"
 
@@ -57,13 +60,27 @@ class FearGreed:
 
 class StockAPI:
 
+    def get_stock_figures(self, symbols: list = None, start_date=None, periods=None):
+        stocks = []
+        for symbol in symbols:
+            info, data = self.get_stock_data(symbol=symbol, start_date=start_date)
+            figure = Forecast().render_figure(symbol=symbol, info=info, data=data, periods=periods)
+
+            stocks.append(
+                html.Div(children=[
+                    dcc.Graph(id=f'forecast-{symbol.lower()}', figure=figure)
+                ], className='col-md-6')
+            )
+        return stocks
+
     def get_stock_data(self, symbol: str = None, start_date: str = None):
         try:
             forecast = {'ds': [], 'y': []}
+            info = yf.Ticker(ticker=symbol).info
             data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"))
             forecast['ds'] = data.index.tz_localize(None).tolist()
             forecast['y'] = data.Close.stack().tolist()
-            return pd.DataFrame.from_dict(forecast)
+            return info, pd.DataFrame.from_dict(forecast)
         except Exception as err:
             print(err)
             raise err

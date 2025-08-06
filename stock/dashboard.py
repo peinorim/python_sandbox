@@ -20,10 +20,12 @@ PERIODS = 90
 SYMBOLS = [
     "ACA.PA",
     "CSPX.AS",
+    "AINF.MI",
     "CW8.PA",
     "PAASI.PA",
     "IDVA.AS",
     "ISOE.AS",
+    "FXAC.AS",
     "^SPX",
     "GC=F",
     "EURUSD=X",
@@ -31,24 +33,11 @@ SYMBOLS = [
     "BTC-USD",
     "BTC-EUR"
 ]
-stocks = []
-forecast = Forecast()
-
-for symbol in SYMBOLS:
-    api = StockAPI()
-
-    data = StockAPI().get_stock_data(symbol=symbol, start_date=START_DATE)
-    figure = forecast.render_figure(symbol=symbol, data=data, periods=PERIODS)
-
-    stocks.append(
-        html.Div(children=[
-            dcc.Graph(id=f'forecast-{symbol.lower()}', figure=figure)
-        ], className='col-md-6')
-    )
+stocks = StockAPI().get_stock_figures(symbols=SYMBOLS, start_date=START_DATE, periods=PERIODS)
 
 fear_greed = FearGreed(start_date=START_DATE)
 vix_data = fear_greed.format_indice_data(indice_name="market_volatility_vix")
-vix_forecast = forecast.render_figure(symbol="VIX", data=vix_data, periods=PERIODS)
+vix_forecast = Forecast().render_figure(symbol="VIX", data=vix_data, periods=PERIODS)
 stocks.append(
     html.Div(children=[
         dcc.Graph(id=f'forecast-vix', figure=vix_forecast)
@@ -81,4 +70,4 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False, use_reloader=True)
