@@ -17,7 +17,7 @@ class Forecast:
 
         forecast_fig['layout']['showlegend'] = True
         forecast_fig['layout']['width'] = inf
-        forecast_fig['layout']['title'] = f"{info.get('shortName').strip()} ({symbol})".upper() if info else symbol.upper()
+        forecast_fig['layout']['title'] = f"{info.get('shortName').strip()} ({symbol}) 200MA : {info.get('twoHundredDayAverage')}".upper() if info else symbol.upper()
 
         forecast_fig.update_layout(
             xaxis=go.layout.XAxis(

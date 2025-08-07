@@ -1,6 +1,9 @@
+import json
+import pickle
 from datetime import datetime, timedelta
 
 import pandas as pd
+import redis
 import requests
 import yfinance as yf
 from dash import html, dcc
@@ -8,7 +11,8 @@ from dash import html, dcc
 from stock.forecast import Forecast
 
 DATE_FORMAT = "%Y-%m-%d"
-
+EXPIRE_CACHE_SECONDS = 200
+redis_conn = redis.StrictRedis()
 
 class FearGreed:
 
@@ -76,9 +80,22 @@ class StockAPI:
     def get_stock_data(self, symbol: str = None, start_date: str = None):
         try:
             forecast = {'ds': [], 'y': []}
-            info = yf.Ticker(ticker=symbol).info
-            data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"))
-            forecast['ds'] = data.index.tz_localize(None).tolist()
+            ticker_info_key = f"{symbol}-info"
+            ticker_data_key = f"{symbol}-data"
+
+            if not redis_conn.get(ticker_info_key):
+                info = yf.Ticker(ticker=symbol).info
+                redis_conn.set(ticker_info_key, json.dumps(info), ex=EXPIRE_CACHE_SECONDS)
+            else:
+                info = json.loads(redis_conn.get(ticker_info_key).decode('utf-8'))
+
+            if not redis_conn.get(ticker_data_key):
+                data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"), ignore_tz=True)
+                redis_conn.set(ticker_data_key, pickle.dumps(data), ex=EXPIRE_CACHE_SECONDS)
+            else:
+                data = pickle.loads(redis_conn.get(ticker_data_key))
+
+            forecast['ds'] = data.index.tolist()
             forecast['y'] = data.Close.stack().tolist()
             return info, pd.DataFrame.from_dict(forecast)
         except Exception as err:

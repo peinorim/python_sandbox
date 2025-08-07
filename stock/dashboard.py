@@ -18,11 +18,14 @@ START_DATE = "2020-01-01"
 # START_DATE = (datetime.today() - timedelta(days=200)).strftime("%Y-%m-%d")
 PERIODS = 90
 SYMBOLS = [
+    "PLTR",
     "ACA.PA",
     "CSPX.AS",
+    "CNDX.AS",
     "AINF.MI",
     "CW8.PA",
     "PAASI.PA",
+    "AASI.PA",
     "IDVA.AS",
     "ISOE.AS",
     "FXAC.AS",
@@ -70,4 +73,4 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 if __name__ == '__main__':
-    app.run(debug=False, use_reloader=True)
+    app.run(debug=False, use_reloader=False)
