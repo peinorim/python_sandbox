@@ -14,6 +14,7 @@ DATE_FORMAT = "%Y-%m-%d"
 EXPIRE_CACHE_SECONDS = 200
 redis_conn = redis.StrictRedis()
 
+
 class FearGreed:
 
     def __init__(self, start_date: str = None):
@@ -67,8 +68,13 @@ class StockAPI:
     def get_stock_figures(self, symbols: list = None, start_date=None, periods=None):
         stocks = []
         for symbol in symbols:
-            info, data = self.get_stock_data(symbol=symbol, start_date=start_date)
-            figure = Forecast().render_figure(symbol=symbol, info=info, data=data, periods=periods)
+
+            if not redis_conn.get(symbol):
+                info, data = self.get_stock_data(symbol=symbol, start_date=start_date)
+                figure = Forecast().render_figure(symbol=symbol, info=info, data=data, periods=periods)
+                redis_conn.set(symbol, pickle.dumps(figure), ex=EXPIRE_CACHE_SECONDS)
+            else:
+                figure = pickle.loads(redis_conn.get(symbol))
 
             stocks.append(
                 html.Div(children=[
@@ -80,20 +86,9 @@ class StockAPI:
     def get_stock_data(self, symbol: str = None, start_date: str = None):
         try:
             forecast = {'ds': [], 'y': []}
-            ticker_info_key = f"{symbol}-info"
-            ticker_data_key = f"{symbol}-data"
-
-            if not redis_conn.get(ticker_info_key):
-                info = yf.Ticker(ticker=symbol).info
-                redis_conn.set(ticker_info_key, json.dumps(info), ex=EXPIRE_CACHE_SECONDS)
-            else:
-                info = json.loads(redis_conn.get(ticker_info_key).decode('utf-8'))
-
-            if not redis_conn.get(ticker_data_key):
-                data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"), ignore_tz=True)
-                redis_conn.set(ticker_data_key, pickle.dumps(data), ex=EXPIRE_CACHE_SECONDS)
-            else:
-                data = pickle.loads(redis_conn.get(ticker_data_key))
+            info = yf.Ticker(ticker=symbol).info
+            data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
+                               ignore_tz=True)
 
             forecast['ds'] = data.index.tolist()
             forecast['y'] = data.Close.stack().tolist()

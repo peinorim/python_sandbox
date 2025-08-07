@@ -25,7 +25,6 @@ SYMBOLS = [
     "AINF.MI",
     "CW8.PA",
     "PAASI.PA",
-    "AASI.PA",
     "IDVA.AS",
     "ISOE.AS",
     "FXAC.AS",
@@ -73,4 +72,4 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 if __name__ == '__main__':
-    app.run(debug=False, use_reloader=False)
+    app.run(debug=True, use_reloader=True)
