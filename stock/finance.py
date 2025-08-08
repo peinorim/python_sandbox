@@ -1,4 +1,3 @@
-import json
 import pickle
 from datetime import datetime, timedelta
 
@@ -11,7 +10,7 @@ from dash import html, dcc
 from stock.forecast import Forecast
 
 DATE_FORMAT = "%Y-%m-%d"
-EXPIRE_CACHE_SECONDS = 200
+EXPIRE_CACHE_SECONDS = 300
 redis_conn = redis.StrictRedis()
 
 
