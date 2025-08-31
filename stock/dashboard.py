@@ -1,3 +1,5 @@
+from os import getenv
+
 import dash
 from dash import html
 from dash import dcc
@@ -77,4 +79,4 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True if getenv("DEBUG") else False)
