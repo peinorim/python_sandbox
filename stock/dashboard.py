@@ -4,8 +4,8 @@ from dash import dcc
 import dash_bootstrap_components as dbc
 import dash_daq as daq
 
-from stock.finance import StockAPI, FearGreed
-from stock.forecast import Forecast
+from finance import StockAPI, FearGreed
+from forecast import Forecast
 
 # https://dash.plotly.com/dash-core-components/graph
 # https://bootswatch.com/darkly/

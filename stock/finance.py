@@ -7,7 +7,7 @@ import requests
 import yfinance as yf
 from dash import html, dcc
 
-from stock.forecast import Forecast
+from forecast import Forecast
 
 DATE_FORMAT = "%Y-%m-%d"
 EXPIRE_CACHE_SECONDS = 300
