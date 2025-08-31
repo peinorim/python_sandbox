@@ -2,16 +2,16 @@ import pickle
 from datetime import datetime, timedelta
 
 import pandas as pd
-import redis
 import requests
 import yfinance as yf
 from dash import html, dcc
 
 from forecast import Forecast
+from stock.redis_cache import RedisCache
 
 DATE_FORMAT = "%Y-%m-%d"
 EXPIRE_CACHE_SECONDS = 300
-redis_conn = redis.StrictRedis()
+redis_conn = RedisCache()
 
 
 class FearGreed:
