@@ -7,7 +7,7 @@ import yfinance as yf
 from dash import html, dcc
 
 from forecast import Forecast
-from stock.redis_cache import RedisCache
+from redis_cache_client import RedisCache
 
 DATE_FORMAT = "%Y-%m-%d"
 EXPIRE_CACHE_SECONDS = 300
