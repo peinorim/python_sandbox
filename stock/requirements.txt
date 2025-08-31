@@ -1,0 +1,10 @@
+dash
+dash-bootstrap-components
+dash_daq
+gunicorn
+pandas
+plotly
+prophet
+requests
+texttable
+yfinance
