@@ -19,15 +19,21 @@ START_DATE = "2020-01-01"
 PERIODS = 90
 SYMBOLS = [
     "PLTR",
+    "NVDA",
     "ACA.PA",
     "CSPX.AS",
     "CNDX.AS",
     "CW8.PA",
     "PAASI.PA",
     "IDVA.AS",
-    "ISOE.AS",
+    "XDEW.MI",
+    "IJPE.AS",
     "FXAC.AS",
+    "GOLD.MI",
+    "ISOE.AS",
     "^SPX",
+    "^SPXEW",
+    "^NDX",
     "GC=F",
     "EURUSD=X",
     "DX-Y.NYB",
@@ -67,7 +73,7 @@ app.layout = dbc.Container([
     dbc.Row(
         [html.Div(className="col-md-4"), fear_greed_gauge, fear_and_greed_previous, html.Div(className="col-md-4")]
     ),
-    dbc.Row(stocks),
+    dbc.Row(stocks, id="stocks"),
 ], fluid=True)
 
 if __name__ == '__main__':

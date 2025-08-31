@@ -5,7 +5,9 @@ from dash import dcc, html
 import dash_bootstrap_components as dbc
 import yfinance as yf
 import plotly.graph_objs as go
+from dash_bootstrap_templates import load_figure_template
 
+load_figure_template("darkly")
 
 def download_data(tickers, start, end):
     data = yf.download(tickers, start=start, end=end)
@@ -45,9 +47,9 @@ idl = {
     'ACUU.DE': 0.25,
 }
 valinor = {
-    'CSPX.AS': 0.68,
-    'ISOE.AS': 0.05,
-    'GOLD.MI': 0.27,
+    'CSPX.AS': 0.50,
+    'ACA.PA': 0.25,
+    'GOLD.MI': 0.25,
 }
 
 # Définir la période d'analyse
@@ -111,6 +113,7 @@ app.layout = dbc.Container([
                     xaxis={'title': 'Date'},
                     yaxis={'title': 'Cumulative Returns'},
                     legend={'x': 0, 'y': 1},
+                    template='darkly',
                     hovermode='closest'
                 )
             }
