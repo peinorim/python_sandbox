@@ -5,6 +5,7 @@ gunicorn
 pandas
 plotly
 prophet
+redis
 requests
 texttable
 yfinance
