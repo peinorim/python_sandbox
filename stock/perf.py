@@ -44,7 +44,7 @@ idl = {
     'GOLD.MI': 0.25,
     'JPYEUR=X': 0.25,
     'NRGW.PA': 0.25,
-    'ACUU.DE': 0.25,
+    'AASI.PA': 0.25,
 }
 valinor = {
     'CSPX.AS': 0.50,

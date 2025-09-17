@@ -27,7 +27,7 @@ SYMBOLS = [
     "CNDX.AS",
     "CW8.PA",
     "PAASI.PA",
-    "FXAC.AS",
+    "CNYA.AS",
     "IDVA.AS",
     "GOLD.MI",
     "ISOE.AS",
