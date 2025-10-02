@@ -20,13 +20,14 @@ START_DATE = "2020-01-01"
 # START_DATE = (datetime.today() - timedelta(days=200)).strftime("%Y-%m-%d")
 PERIODS = 90
 SYMBOLS = [
-    "PLTR",
     "NVDA",
     "ACA.PA",
     "CSPX.AS",
     "CNDX.AS",
     "CW8.PA",
+    "GOAI.MI",
     "PAASI.PA",
+    "FXAC.AS",
     "CNYA.AS",
     "IDVA.AS",
     "GOLD.MI",
