@@ -7,5 +7,6 @@ plotly
 prophet
 redis
 requests
+selenium
 texttable
 yfinance

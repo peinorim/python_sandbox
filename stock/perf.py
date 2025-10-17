@@ -9,6 +9,7 @@ from dash_bootstrap_templates import load_figure_template
 
 load_figure_template("darkly")
 
+
 def download_data(tickers, start, end):
     data = yf.download(tickers, start=start, end=end)
     return data['Close']
@@ -49,11 +50,19 @@ idl = {
 valinor = {
     'CSPX.AS': 0.50,
     'ACA.PA': 0.25,
-    'GOLD.MI': 0.25,
+    'ISOE.AS': 0.05,
+    'GOLD.MI': 0.2,
+}
+
+dad = {
+    'GOLD.MI': 0.5,
+    "EMBH.PA": 0.15,
+    "CSW.PA": 0.15,
+    "ACWI.PA": 0.20
 }
 
 # Définir la période d'analyse
-start_date = '2024-01-01'
+start_date = '2025-01-01'
 end_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 
 valinor_value = calculate_portfolio_performance(stocks=valinor, start_date=start_date, end_date=end_date)
@@ -62,6 +71,7 @@ msci_world_value = calculate_portfolio_performance(stocks=msci_world, start_date
 nasdaq_value = calculate_portfolio_performance(stocks=nasdaq, start_date=start_date, end_date=end_date)
 emu_value = calculate_portfolio_performance(stocks=emu, start_date=start_date, end_date=end_date)
 idl_value = calculate_portfolio_performance(stocks=idl, start_date=start_date, end_date=end_date)
+dad_value = calculate_portfolio_performance(stocks=dad, start_date=start_date, end_date=end_date)
 
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 app.layout = dbc.Container([
@@ -106,6 +116,12 @@ app.layout = dbc.Container([
                         y=idl_value,
                         mode='lines',
                         name='IDL'
+                    ),
+                    go.Scatter(
+                        x=dad_value.index,
+                        y=dad_value,
+                        mode='lines',
+                        name='Dad'
                     )
                 ],
                 'layout': go.Layout(

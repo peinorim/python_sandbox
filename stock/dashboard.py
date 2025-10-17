@@ -1,3 +1,4 @@
+import sys
 from os import getenv
 
 import dash
@@ -8,39 +9,18 @@ import dash_daq as daq
 
 from finance import StockAPI, FearGreed
 from forecast import Forecast
+from stock import SYMBOLS, PERIODS, START_DATE
+from stock.offline import render_html_index
 
 # https://dash.plotly.com/dash-core-components/graph
 # https://bootswatch.com/darkly/
 # https://dash-bootstrap-components.opensource.faculty.ai/docs/components/
 # https://edition.cnn.com/markets/fear-and-greed
 
-
+to_html = sys.argv[1] == 'offline'
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
-START_DATE = "2020-01-01"
-# START_DATE = (datetime.today() - timedelta(days=200)).strftime("%Y-%m-%d")
-PERIODS = 90
-SYMBOLS = [
-    "NVDA",
-    "ACA.PA",
-    "CSPX.AS",
-    "CNDX.AS",
-    "CW8.PA",
-    "GOAI.MI",
-    "PAASI.PA",
-    "FXAC.AS",
-    "CNYA.AS",
-    "IDVA.AS",
-    "GOLD.MI",
-    "ISOE.AS",
-    "^SPX",
-    "^NDX",
-    "GC=F",
-    "EURUSD=X",
-    "DX-Y.NYB",
-    "BTC-USD",
-    "BTC-EUR"
-]
-stocks = StockAPI().get_stock_figures(symbols=SYMBOLS, start_date=START_DATE, periods=PERIODS)
+
+stocks = StockAPI().get_stock_figures(symbols=SYMBOLS, start_date=START_DATE, periods=PERIODS, to_html=to_html)
 
 fear_greed = FearGreed(start_date=START_DATE)
 vix_data = fear_greed.format_indice_data(indice_name="market_volatility_vix")
@@ -77,4 +57,11 @@ app.layout = dbc.Container([
 ], fluid=True)
 
 if __name__ == '__main__':
-    app.run(debug=True if getenv("DEBUG") else False)
+
+    if sys.argv and sys.argv[1] == 'offline':
+        print("OFFLINE")
+        with open("dashboard.html", "w", encoding="utf-8") as f:
+            f.write(render_html_index(symbols=SYMBOLS))
+
+    else:
+        app.run(debug=True if getenv("DEBUG") else False)

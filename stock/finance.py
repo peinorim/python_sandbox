@@ -64,7 +64,7 @@ class FearGreed:
 
 class StockAPI:
 
-    def get_stock_figures(self, symbols: list = None, start_date=None, periods=None):
+    def get_stock_figures(self, symbols: list = None, start_date=None, periods=None, to_html: bool = False):
         stocks = []
         for symbol in symbols:
 
@@ -74,6 +74,9 @@ class StockAPI:
                 redis_conn.set(symbol, pickle.dumps(figure), ex=EXPIRE_CACHE_SECONDS)
             else:
                 figure = pickle.loads(redis_conn.get(symbol))
+
+            if to_html:
+                figure.write_html(f"offline/{symbol}.html", include_plotlyjs='cdn', full_html=False)
 
             stocks.append(
                 html.Div(children=[
@@ -95,11 +98,3 @@ class StockAPI:
         except Exception as err:
             print(err)
             raise err
-
-
-if __name__ == "__main__":
-    api = StockAPI()
-    symbol = "SP5C.PA"
-    start_date = "2020-01-01"
-
-    data = StockAPI().get_stock_data(symbol=symbol, start_date=start_date)

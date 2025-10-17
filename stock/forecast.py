@@ -7,13 +7,18 @@ import plotly.graph_objects as go
 
 class Forecast:
 
-    def render_figure(self, symbol: str = None, info: dict=None, data=None, periods=None):
-        m = Prophet()
-        m.fit(data)
-        future = m.make_future_dataframe(periods=periods)
-        forecast = m.predict(future)
+    def __init__(self):
+        self.m = Prophet()
 
-        forecast_fig = plot_plotly(m, forecast, uncertainty=True, plot_cap=True, trend=False, changepoints=True)
+    def get_future_data(self, data: dict =None, periods: int = None):
+        self.m.fit(data)
+        future = self.m.make_future_dataframe(periods=periods)
+        return self.m.predict(future)
+
+    def render_figure(self, symbol: str = None, info: dict=None, data=None, periods=None):
+
+        forecast = self.get_future_data(data=data, periods=periods)
+        forecast_fig = plot_plotly(self.m, forecast, uncertainty=True, plot_cap=True, trend=False, changepoints=True)
 
         forecast_fig['layout']['showlegend'] = True
         forecast_fig['layout']['width'] = inf
