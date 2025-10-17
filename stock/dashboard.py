@@ -1,5 +1,4 @@
 import os
-import sys
 from os import getenv
 
 import dash
@@ -10,8 +9,7 @@ import dash_daq as daq
 
 from finance import StockAPI, FearGreed
 from forecast import Forecast
-from stock import SYMBOLS, PERIODS, START_DATE
-from stock.offline import render_html_index
+from offline import render_html_index
 
 # https://dash.plotly.com/dash-core-components/graph
 # https://bootswatch.com/darkly/
@@ -20,6 +18,35 @@ from stock.offline import render_html_index
 
 to_html = os.getenv('OFFLINE', 'false') == 'true'
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
+
+START_DATE = "2020-01-01"
+# START_DATE = (datetime.today() - timedelta(days=200)).strftime("%Y-%m-%d")
+
+PERIODS = 90
+SYMBOLS = [
+    "NVDA",
+    "ACA.PA",
+    "CSPX.AS",
+    "CNDX.AS",
+    "CW8.PA",
+    "GOAI.MI",
+    "PAASI.PA",
+    "FXAC.AS",
+    "CNYA.AS",
+    "CC1.PA",
+    "CSW.PA",
+    "ACWI.PA",
+    "CMSE.PA",
+    "GOLD.MI",
+    "ISOE.AS",
+    "^SPX",
+    "^NDX",
+    "GC=F",
+    "EURUSD=X",
+    "DX-Y.NYB",
+    "BTC-USD",
+    "BTC-EUR"
+]
 
 stocks = StockAPI().get_stock_figures(symbols=SYMBOLS, start_date=START_DATE, periods=PERIODS, to_html=to_html)
 
