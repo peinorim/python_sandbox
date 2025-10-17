@@ -13,7 +13,7 @@ def render_html_index(symbols: list = None):
   <meta charset="UTF-8">
   <title>Dashboard</title>
 </head>
-<body style="background-color:black;">
+<body style="background-color:black;font-family: Arial, Helvetica, sans-serif;">
   <h2 style='color:lightgray;'>Last update on : {datetime.now(timezone.utc).astimezone().strftime('%Y-%m-%dT%H:%M:%S %Z')}</h2>
   <!-- Inclusion d’un fichier externe -->
   <div>
