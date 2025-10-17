@@ -8,7 +8,7 @@ def render_html_index(symbols: list = None):
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Page principale</title>
+  <title>Dashboard</title>
 </head>
 <body style="background-color:black;">
   <!-- Inclusion d’un fichier externe -->
