@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def render_html_index(symbols: list = None):
     html = ""
     for symbol in symbols:
@@ -11,8 +14,11 @@ def render_html_index(symbols: list = None):
   <title>Dashboard</title>
 </head>
 <body style="background-color:black;">
+  <h2>Last update on : {datetime.now().isoformat()}</h2>
   <!-- Inclusion d’un fichier externe -->
-  {html}
+  <div>
+    {html}
+  </div>
 </body>
 </html>
 """
