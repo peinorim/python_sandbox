@@ -31,3 +31,17 @@ jobs:
       - name: Exécution du script Python
         run: |
           python stock/dashboard.py offline
+
+      - name: Commit et push des fichiers générés
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Vérifie s'il y a des changements
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "🤖 Automatic update by workflow [$(date '+%Y-%m-%d %H:%M:%S')]"
+            git push
+          else
+            echo "Nothing to commit."
+          fi
