@@ -30,7 +30,7 @@ jobs:
 
       - name: Python data update
         run: |
-          python stock/dashboard.py offline
+          python stock/dashboard.py
 
       - name: Commit & push
         run: |
