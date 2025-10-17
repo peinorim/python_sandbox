@@ -1,4 +1,4 @@
-name: Exécution Python planifiée
+name: Stock forecast update
 
 on:
   schedule:
@@ -16,23 +16,23 @@ jobs:
       OFFLINE: "true"
 
     steps:
-      - name: Checkout du code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Configuration de Python
+      - name: Python configuration
         uses: actions/setup-python@v5
         with:
           python-version: '3.13'
 
-      - name: Installation des dépendances
+      - name: Requirements installation
         run: |
           pip install -r requirements.txt
 
-      - name: Exécution du script Python
+      - name: Python data update
         run: |
           python stock/dashboard.py offline
 
-      - name: Commit et push des fichiers générés
+      - name: Commit & push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
