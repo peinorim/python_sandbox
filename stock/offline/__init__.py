@@ -10,7 +10,7 @@ def render_html_index(symbols: list = None):
   <meta charset="UTF-8">
   <title>Page principale</title>
 </head>
-<body class="container">
+<body style="background-color:black;">
   <!-- Inclusion d’un fichier externe -->
   {html}
 </body>

@@ -1,3 +1,4 @@
+import os
 import sys
 from os import getenv
 
@@ -17,7 +18,7 @@ from stock.offline import render_html_index
 # https://dash-bootstrap-components.opensource.faculty.ai/docs/components/
 # https://edition.cnn.com/markets/fear-and-greed
 
-to_html = sys.argv[1] == 'offline'
+to_html = os.getenv('OFFLINE', 'false') == 'true'
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 
 stocks = StockAPI().get_stock_figures(symbols=SYMBOLS, start_date=START_DATE, periods=PERIODS, to_html=to_html)
@@ -58,7 +59,7 @@ app.layout = dbc.Container([
 
 if __name__ == '__main__':
 
-    if sys.argv and sys.argv[1] == 'offline':
+    if to_html:
         print("OFFLINE")
         with open("dashboard.html", "w", encoding="utf-8") as f:
             f.write(render_html_index(symbols=SYMBOLS))

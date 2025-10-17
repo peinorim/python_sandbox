@@ -1,0 +1,33 @@
+name: Exécution Python planifiée
+
+on:
+  schedule:
+    # À chaque heure pleine de 9h à 22h Paris (≈ 8h à 21h UTC)
+    - cron: '0 8-21 * * 1-5'
+    # À chaque demi-heure (9h30 à 22h30 Paris ≈ 8h30 à 21h30 UTC)
+    - cron: '15 8-21 * * 1-5'
+  workflow_dispatch:  # permet aussi de le lancer manuellement
+
+jobs:
+  run-python:
+    runs-on: ubuntu-latest
+
+    env:
+      OFFLINE: "true"
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Configuration de Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Installation des dépendances
+        run: |
+          pip install -r requirements.txt
+
+      - name: Exécution du script Python
+        run: |
+          python stock/dashboard.py offline
