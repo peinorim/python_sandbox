@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def render_html_index(symbols: list = None):
@@ -14,7 +14,7 @@ def render_html_index(symbols: list = None):
   <title>Dashboard</title>
 </head>
 <body style="background-color:black;">
-  <h2 style='color:lightgray;'>Last update on : {datetime.now().isoformat()}</h2>
+  <h2 style='color:lightgray;'>Last update on : {datetime.now(timezone.utc).astimezone().strftime('%Y-%m-%dT%H:%M:%S %Z')}</h2>
   <!-- Inclusion d’un fichier externe -->
   <div>
     {html}
