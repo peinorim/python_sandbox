@@ -2,7 +2,7 @@ name: Stock forecast update
 
 on:
   schedule:
-    - cron: '*/15 9-22 * * 1-5'
+    - cron: '*/15 7-20 * * 1-5'
   workflow_dispatch:  # permet aussi de le lancer manuellement
 
 jobs:
