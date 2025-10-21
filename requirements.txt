@@ -4,8 +4,7 @@ dash_daq
 gunicorn
 pandas
 plotly
-pystan
-prophet==1.1.7
+prophet==1.1.6
 redis
 requests
 selenium
