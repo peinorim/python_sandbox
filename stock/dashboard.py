@@ -31,6 +31,7 @@ SYMBOLS = [
     "CW8.PA",
     "GOAI.MI",
     "PAASI.PA",
+    "PASI.PA",
     "FXAC.AS",
     "CNYA.AS",
     "CC1.PA",
