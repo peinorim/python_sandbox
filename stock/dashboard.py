@@ -90,6 +90,5 @@ if __name__ == '__main__':
         print("OFFLINE")
         with open("dashboard.html", "w", encoding="utf-8") as f:
             f.write(render_html_index(symbols=SYMBOLS))
-
     else:
         app.run(debug=True if getenv("DEBUG") else False)

@@ -4,10 +4,9 @@ dash_daq
 gunicorn
 pandas
 plotly
-cmdstanpy==1.2.5
-prophet==1.1.6
+cmdstanpy
+prophet
 redis
 requests
-selenium
 texttable
 yfinance
