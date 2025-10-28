@@ -12,6 +12,7 @@ def render_html_index(symbols: list = None):
 <head>
   <meta charset="UTF-8">
   <title>Dashboard</title>
+  <link rel="icon" type="image/x-icon" href="https://icons.iconarchive.com/icons/graphicloads/colorful-long-shadow/256/Chart-icon.png">
 </head>
 <body style="background-color:black;font-family: Arial, Helvetica, sans-serif;">
   <h2 style='color:lightgray;'>Last update on : {datetime.now(timezone.utc).astimezone().strftime('%Y-%m-%dT%H:%M:%S %Z')}</h2>
