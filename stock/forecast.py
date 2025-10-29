@@ -53,6 +53,6 @@ class Forecast:
                 ),
                 type="date"
             ),
-            yaxis=dict(showgrid=True),
+            yaxis=dict(showgrid=True, title=''),
         )
         return forecast_fig
