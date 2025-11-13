@@ -67,13 +67,13 @@ class StockAPI:
     def get_stock_figures(self, symbols: list = None, start_date=None, periods=None, to_html: bool = False):
         stocks = []
         for symbol in symbols:
-
-            if not redis_conn.get(symbol):
+            cache_key = f"{symbol}-{start_date}-{periods}"
+            if not redis_conn.get(cache_key):
                 info, data = self.get_stock_data(symbol=symbol, start_date=start_date)
                 figure = Forecast().render_figure(symbol=symbol, info=info, data=data, periods=periods)
-                redis_conn.set(symbol, pickle.dumps(figure), ex=EXPIRE_CACHE_SECONDS)
+                redis_conn.set(cache_key, pickle.dumps(figure), ex=EXPIRE_CACHE_SECONDS)
             else:
-                figure = pickle.loads(redis_conn.get(symbol))
+                figure = pickle.loads(redis_conn.get(cache_key))
 
             if to_html:
                 figure.write_html(f"offline/{symbol}.html", include_plotlyjs='cdn', full_html=False)
