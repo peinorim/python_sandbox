@@ -29,7 +29,6 @@ SYMBOLS = [
     "CSPX.AS",
     "CNDX.AS",
     "CW8.PA",
-    "GOAI.MI",
     "PAASI.PA",
     "FXAC.AS",
     "CNYA.AS",
