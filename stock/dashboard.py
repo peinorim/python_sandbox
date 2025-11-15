@@ -37,6 +37,7 @@ SYMBOLS = [
     "ACWI.PA",
     "CMSE.PA",
     "REMX.PA",
+    "GDIG.PA",
     "GOLD.MI",
     "ISOE.AS",
     "^SPX",
