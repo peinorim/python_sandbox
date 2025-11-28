@@ -8,5 +8,4 @@ cmdstanpy
 prophet
 redis
 requests
-texttable
 yfinance

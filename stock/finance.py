@@ -1,3 +1,4 @@
+import os
 import pickle
 from datetime import datetime, timedelta
 
@@ -39,7 +40,8 @@ class FearGreed:
             resp = requests.get(
                 url=f"https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2021-01-01",
                 headers={"user-agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0",
-                         "content-type": "application/json"}
+                         "content-type": "application/json"},
+                proxies={"http":"http://localhost:3128", "https":"http://localhost:3128"} if os.getenv("OFFICE", "false") == "true" else None
             )
             resp.raise_for_status()
             return resp.json()
@@ -88,9 +90,21 @@ class StockAPI:
     def get_stock_data(self, symbol: str = None, start_date: str = None):
         try:
             forecast = {'ds': [], 'y': []}
-            info = yf.Ticker(ticker=symbol).info
-            data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
-                               ignore_tz=True)
+
+            if os.getenv("OFFICE", "false") == "true":
+                from curl_cffi import requests
+                yf.set_config(proxy="http://localhost:3128")
+
+                with requests.Session(impersonate="chrome110") as session:
+                    session.verify = False
+                    info = yf.Ticker(ticker=symbol, session=session).info
+                    data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
+                    ignore_tz = True, session=session)
+
+            else:
+                info = yf.Ticker(ticker=symbol).info
+                data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
+                                   ignore_tz=True)
 
             forecast['ds'] = data.index.tolist()
             forecast['y'] = data.Close.stack().tolist()
