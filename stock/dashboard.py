@@ -24,6 +24,7 @@ START_DATE = "2020-01-01"
 
 PERIODS = 90
 SYMBOLS = [
+    "DG.PA",
     "NVDA",
     "ACA.PA",
     "CSPX.AS",
@@ -31,14 +32,13 @@ SYMBOLS = [
     "CW8.PA",
     "IEMA.AS",
     "PAASI.PA",
-    "CNYA.AS",
-    "CC1.PA",
     "CSW.PA",
     "AGED.AS",
     "COSE.PA",
     "ACWI.PA",
     "GOAT.PA",
     "CMSE.PA",
+    "COMO.PA",
     "REMX.PA",
     "GDIG.PA",
     "ISOE.AS",

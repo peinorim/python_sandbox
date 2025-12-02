@@ -55,10 +55,12 @@ valinor = {
 }
 
 dad = {
-    'GOLD.MI': 0.5,
-    "EMBH.PA": 0.15,
-    "CSW.PA": 0.15,
-    "ACWI.PA": 0.20
+    'GOLD.MI': 0.2,
+    "EMBH.PA": 0.1,
+    "CSW.PA": 0.2,
+    "AFLE.PA": 0.2,
+    "AASI.PA": 0.2,
+    "AGED.AS": 0.1
 }
 
 # Définir la période d'analyse
