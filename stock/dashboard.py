@@ -24,7 +24,6 @@ START_DATE = "2020-01-01"
 
 PERIODS = 90
 SYMBOLS = [
-    "DG.PA",
     "NVDA",
     "ACA.PA",
     "CSPX.AS",
