@@ -41,7 +41,7 @@ SYMBOLS = [
     "GDIG.PA",
     "ISOE.AS",
     "GOLD.MI",
-    "PHAG.AS",
+    "8PSB.DE",
     "^SPX",
     "^NDX",
     "GC=F",
