@@ -30,6 +30,7 @@ SYMBOLS = [
     "EWSP.AS",
     "CNDX.AS",
     "CW8.PA",
+    "IJPA.AS",
     "IEMA.AS",
     "PAASI.PA",
     "CSW.PA",
