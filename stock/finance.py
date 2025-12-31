@@ -93,7 +93,7 @@ class StockAPI:
 
             if os.getenv("OFFICE", "false") == "true":
                 from curl_cffi import requests
-                yf.set_config(proxy="http://localhost:3128")
+                yf.config.network.proxy = {'http': "http://localhost:3128", 'https': "http://localhost:3128"}
 
                 with requests.Session(impersonate="chrome110") as session:
                     session.verify = False
