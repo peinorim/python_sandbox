@@ -27,7 +27,6 @@ SYMBOLS = [
     "NVDA",
     "ACA.PA",
     "CSPX.AS",
-    "EWSP.AS",
     "CNDX.AS",
     "CW8.PA",
     "IDVA.AS",
