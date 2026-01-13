@@ -41,7 +41,6 @@ SYMBOLS = [
     "COMO.PA",
     "CEBT.DE",
     "GDIG.PA",
-    "RARE.MI",
     "ISOE.AS",
     "GOLD.MI",
     "PHAG.MI",
