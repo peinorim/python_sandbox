@@ -37,6 +37,7 @@ SYMBOLS = [
     "CMSE.PA",
     "COMO.PA",
     "GDIG.PA",
+    "CEBT.DE",
     "ISOE.AS",
     "GOLD.MI",
     "PHAG.MI",
