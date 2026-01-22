@@ -2,7 +2,7 @@ dash
 dash-bootstrap-components
 dash_daq
 gunicorn
-pandas
+pandas==2.3.3
 plotly
 cmdstanpy
 prophet
