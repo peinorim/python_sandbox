@@ -23,36 +23,44 @@ START_DATE = "2020-01-01"
 # START_DATE = (datetime.today() - timedelta(days=200)).strftime("%Y-%m-%d")
 
 PERIODS = 90
-SYMBOLS = [
-    "NVDA",
-    "ACA.PA",
-    "CSPX.AS",
-    "CNDX.AS",
-    "CW8.PA",
-    "CSW.PA",
-    "IEMA.AS",
-    "PAASI.PA",
-    "DFND.MI",
-    "COSE.PA",
-    "CMSE.PA",
-    "COMO.PA",
-    "GDIG.PA",
-    "CEBT.DE",
-    "ISOE.AS",
-    "GOLD.MI",
-    "PHAG.MI",
-    "COPA.MI",
-    "^SPX",
-    "^NDX",
-    "GC=F",
-    "SIL=F",
-    "EURUSD=X",
-    "DX-Y.NYB",
-    "BTC-USD",
-    "BTC-EUR"
-]
-
-stocks = StockAPI().get_stock_figures(symbols=SYMBOLS, start_date=START_DATE, periods=PERIODS, to_html=to_html)
+SYMBOLS = {
+    'my': [
+        "NVDA",
+        "ACA.PA",
+        "CSPX.AS",
+        "CNDX.AS",
+        "CW8.PA",
+        "IEMA.AS",
+        "PAASI.PA",
+        "DFND.MI",
+        "CMSE.PA",
+        "COMO.PA",
+        "CEBT.DE",
+        "ISOE.AS",
+        "GOLD.MI",
+        "PHAG.MI",
+        "COPA.MI",
+        "^SPX",
+        "^NDX",
+        "GC=F",
+        "SIL=F",
+        "EURUSD=X",
+        "DX-Y.NYB",
+        "BTC-USD",
+        "BTC-EUR"
+    ],
+    'dad': [
+        "XGSD.MI",
+        "EHDL.DE",
+        "GDIG.PA",
+        "CSW.PA",
+        "COMO.PA",
+        "IHYE.MI",
+        "IS3C.DE"
+    ]
+}
+stocks = StockAPI().get_stock_figures(symbols=SYMBOLS.get('my'), start_date=START_DATE, periods=PERIODS,
+                                      to_html=to_html)
 
 fear_greed = FearGreed(start_date=START_DATE)
 vix_data = fear_greed.format_indice_data(indice_name="market_volatility_vix")
