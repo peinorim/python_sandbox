@@ -103,6 +103,6 @@ if __name__ == '__main__':
         with open("dashboard.html", "w", encoding="utf-8") as f:
             f.write(render_html_index(symbols=SYMBOLS.get('my')))
         with open("dashboard_dad.html", "w", encoding="utf-8") as f:
-            f.write(render_html_index(symbols=SYMBOLS.get('my')))
+            f.write(render_html_index(symbols=SYMBOLS.get('dad')))
     else:
         app.run(debug=True if getenv("DEBUG") else False)
