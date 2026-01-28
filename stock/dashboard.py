@@ -9,7 +9,7 @@ import dash_daq as daq
 
 from finance import StockAPI, FearGreed
 from forecast import Forecast
-from offline import render_html_index
+from stock import render_html_index
 
 # https://dash.plotly.com/dash-core-components/graph
 # https://bootswatch.com/darkly/
