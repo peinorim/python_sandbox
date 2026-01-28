@@ -20,7 +20,6 @@ to_html = os.getenv('OFFLINE', 'false') == 'true'
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 
 START_DATE = "2020-01-01"
-# START_DATE = (datetime.today() - timedelta(days=200)).strftime("%Y-%m-%d")
 
 PERIODS = 90
 SYMBOLS = {
@@ -34,7 +33,6 @@ SYMBOLS = {
         "PAASI.PA",
         "DFND.MI",
         "CMSE.PA",
-        "COMO.PA",
         "CEBT.DE",
         "ISOE.AS",
         "GOLD.MI",
@@ -59,12 +57,15 @@ SYMBOLS = {
         "IS3C.DE"
     ]
 }
-stocks = StockAPI().get_stock_figures(symbols=SYMBOLS.get('dad'), start_date=START_DATE, periods=PERIODS,
+stocks = StockAPI().get_stock_figures(symbols=SYMBOLS.get('my'), start_date=START_DATE, periods=PERIODS,
                                       to_html=to_html)
+dad_stocks = StockAPI().get_stock_figures(symbols=SYMBOLS.get('dad'), start_date=START_DATE, periods=PERIODS,
+                                          to_html=to_html)
 
 fear_greed = FearGreed(start_date=START_DATE)
 vix_data = fear_greed.format_indice_data(indice_name="market_volatility_vix")
 vix_forecast = Forecast().render_figure(symbol="VIX", data=vix_data, periods=PERIODS)
+
 stocks.append(
     html.Div(children=[
         dcc.Graph(id=f'forecast-vix', figure=vix_forecast)
@@ -94,6 +95,7 @@ app.layout = dbc.Container([
         [html.Div(className="col-md-4"), fear_greed_gauge, fear_and_greed_previous, html.Div(className="col-md-4")]
     ),
     dbc.Row(stocks, id="stocks"),
+    dbc.Row(dad_stocks, id="dad-stocks"),
 ], fluid=True)
 
 if __name__ == '__main__':
@@ -101,8 +103,6 @@ if __name__ == '__main__':
     if to_html:
         print("OFFLINE")
         with open("dashboard.html", "w", encoding="utf-8") as f:
-            f.write(render_html_index(symbols=SYMBOLS.get('my')))
-        with open("dashboard_dad.html", "w", encoding="utf-8") as f:
-            f.write(render_html_index(symbols=SYMBOLS.get('dad')))
+            f.write(render_html_index(symbols=SYMBOLS.get('my')+SYMBOLS.get('dad')))
     else:
         app.run(debug=True if getenv("DEBUG") else False)
