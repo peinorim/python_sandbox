@@ -38,11 +38,11 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
           git fetch origin master
-          git add stock/
+          git add stock/offline/*
           
           # Vérifie s'il y a des changements
           if [ -n "$(git status --porcelain)" ]; then
-            git add .
+            git add dashboard.html
             git commit -m "🤖 Automatic update by workflow [$(date '+%Y-%m-%d %H:%M:%S')]"
             git pull --rebase origin master
             git push origin master
