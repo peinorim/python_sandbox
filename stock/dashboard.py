@@ -59,7 +59,7 @@ SYMBOLS = {
         "IS3C.DE"
     ]
 }
-stocks = StockAPI().get_stock_figures(symbols=SYMBOLS.get('my'), start_date=START_DATE, periods=PERIODS,
+stocks = StockAPI().get_stock_figures(symbols=SYMBOLS.get('dad'), start_date=START_DATE, periods=PERIODS,
                                       to_html=to_html)
 
 fear_greed = FearGreed(start_date=START_DATE)

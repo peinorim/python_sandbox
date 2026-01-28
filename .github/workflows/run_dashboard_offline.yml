@@ -21,7 +21,7 @@ jobs:
       - name: Python configuration
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.14'
 
       - name: Requirements installation
         run: |
@@ -38,7 +38,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
           git fetch origin master
-          git add stock/
+          git add stock/*
           
           # Vérifie s'il y a des changements
           if [ -n "$(git status --porcelain)" ]; then
