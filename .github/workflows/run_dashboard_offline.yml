@@ -29,8 +29,7 @@ jobs:
 
       - name: Python data update
         run: |
-          cd stock
-          python dashboard.py
+          python stock/dashboard.py
 
       - name: Commit & push
         run: |
