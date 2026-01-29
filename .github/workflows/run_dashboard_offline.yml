@@ -29,7 +29,8 @@ jobs:
 
       - name: Python data update
         run: |
-          python stock/dashboard.py
+          cd stock
+          python dashboard.py
 
       - name: Commit & push
         run: |
@@ -37,7 +38,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
           git fetch origin master
-          git add stock/offline/*
+          git add stock/
           
           # Vérifie s'il y a des changements
           if [ -n "$(git status --porcelain)" ]; then
