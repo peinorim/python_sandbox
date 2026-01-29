@@ -42,7 +42,6 @@ jobs:
           
           # Vérifie s'il y a des changements
           if [ -n "$(git status --porcelain)" ]; then
-            git add dashboard.html
             git commit -m "🤖 Automatic update by workflow [$(date '+%Y-%m-%d %H:%M:%S')]"
             git pull --rebase origin master
             git push origin master
