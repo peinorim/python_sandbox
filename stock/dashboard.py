@@ -42,7 +42,7 @@ SYMBOLS = {
         "BTC-USD"
     ],
     'dad': [
-        "XGSD.MI",
+        "XGSD.DE",
         "EHDL.DE",
         "GDIG.PA",
         "CSW.PA",
