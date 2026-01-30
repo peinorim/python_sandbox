@@ -44,17 +44,14 @@ SYMBOLS = {
         "SIL=F",
         "EURUSD=X",
         "DX-Y.NYB",
-        "BTC-USD",
-        "BTC-EUR"
+        "BTC-USD"
     ],
     'dad': [
         "XGSD.MI",
         "EHDL.DE",
         "GDIG.PA",
         "CSW.PA",
-        "COMO.PA",
-        "IHYE.MI",
-        "IS3C.DE"
+        "COMO.PA"
     ]
 }
 stocks = StockAPI().get_stock_figures(symbols=SYMBOLS.get('my'), start_date=START_DATE, periods=PERIODS,
