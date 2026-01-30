@@ -11,11 +11,6 @@ from finance import StockAPI, FearGreed
 from forecast import Forecast
 from offline import render_html_index
 
-# https://dash.plotly.com/dash-core-components/graph
-# https://bootswatch.com/darkly/
-# https://dash-bootstrap-components.opensource.faculty.ai/docs/components/
-# https://edition.cnn.com/markets/fear-and-greed
-
 to_html = os.getenv('OFFLINE', 'false') == 'true'
 app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
 
@@ -54,10 +49,19 @@ SYMBOLS = {
         "COMO.PA"
     ]
 }
-stocks = StockAPI().get_stock_figures(symbols=SYMBOLS.get('my'), start_date=START_DATE, periods=PERIODS,
-                                      to_html=to_html)
-dad_stocks = StockAPI().get_stock_figures(symbols=SYMBOLS.get('dad'), start_date=START_DATE, periods=PERIODS,
-                                          to_html=to_html)
+
+stocks = StockAPI().get_stock_figures(
+    symbols=SYMBOLS.get('my'),
+    start_date=START_DATE,
+    periods=PERIODS,
+    to_html=to_html
+)
+dad_stocks = StockAPI().get_stock_figures(
+    symbols=SYMBOLS.get('dad'),
+    start_date=START_DATE,
+    periods=PERIODS,
+    to_html=to_html
+)
 
 fear_greed = FearGreed(start_date=START_DATE)
 vix_data = fear_greed.format_indice_data(indice_name="market_volatility_vix")
@@ -100,6 +104,6 @@ if __name__ == '__main__':
     if to_html:
         print("OFFLINE")
         with open("dashboard.html", "w", encoding="utf-8") as f:
-            f.write(render_html_index(symbols=SYMBOLS.get('my')+SYMBOLS.get('dad')))
+            f.write(render_html_index(symbols=SYMBOLS.get('my') + SYMBOLS.get('dad')))
     else:
         app.run(debug=True if getenv("DEBUG") else False)
