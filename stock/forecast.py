@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from prophet import Prophet
 from prophet.plot import plot_plotly
 
@@ -79,6 +81,11 @@ class Forecast:
                     trace.name = "Changepoint"
                     trace.showlegend = True
 
+        # ── Range par défaut : 1 an ──────────────────────────
+        last_date = forecast["ds"].max()
+        one_year_ago = last_date - timedelta(days=365)
+        default_range = [one_year_ago.strftime("%Y-%m-%d"), last_date.strftime("%Y-%m-%d")]
+
         # ── Layout moderne (dark theme) ──────────────────────
         forecast_fig.update_layout(
             template="plotly_dark",
@@ -112,6 +119,7 @@ class Forecast:
             ),
             xaxis=dict(
                 title="",
+                range=default_range,
                 tickformat="%d %b %Y",
                 tickfont=dict(size=11, color=_COLORS["muted"]),
                 gridcolor=_COLORS["grid"],
@@ -130,7 +138,7 @@ class Forecast:
                         dict(step="all", label="Tout"),
                     ],
                 ),
-                rangeslider=dict(visible=True, bgcolor=_COLORS["paper"], thickness=0.06),
+                rangeslider=dict(visible=True, bgcolor=_COLORS["paper"], thickness=0.1),
                 type="date",
             ),
             yaxis=dict(
