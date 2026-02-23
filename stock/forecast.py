@@ -111,6 +111,7 @@ class Forecast:
                 bordercolor=_COLORS["grid"],
             ),
             xaxis=dict(
+                title="",
                 tickformat="%d %b %Y",
                 tickfont=dict(size=11, color=_COLORS["muted"]),
                 gridcolor=_COLORS["grid"],
