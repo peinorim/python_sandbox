@@ -41,7 +41,7 @@ SYMBOLS = {
     ],
     'dad': [
         "XGSD.DE",
-        "EHDL.DE",
+        "EMHD.PA",
         "GDIG.PA",
         "CSW.PA",
         "COMO.PA"
