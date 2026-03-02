@@ -23,18 +23,12 @@ def render_html_index(symbols: list = None):
     body {{
       background: #0e1117;
       color: #c9d1d9;
-      font-family: Inter, 'Segoe UI', system-ui, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       padding: 1rem;
     }}
     header {{
       text-align: center;
       padding: 0.8rem 0 1.2rem;
-    }}
-    header h2 {{
-      font-size: 0.85rem;
-      font-weight: 400;
-      color: #8b949e;
-      letter-spacing: 0.04em;
     }}
     .grid {{
       display: grid;
