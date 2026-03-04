@@ -28,7 +28,7 @@ SYMBOLS = {
         "IEMA.AS",
         "PAASI.PA",
         "DFND.MI",
-        "CSJP.AS",
+        "SJPE.AS",
         "CMSE.PA",
         "ISOE.AS",
         "GOLD.MI",
