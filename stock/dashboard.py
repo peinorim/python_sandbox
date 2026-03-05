@@ -25,7 +25,6 @@ SYMBOLS = {
         "CNDX.AS",
         "CW8.PA",
         "IDVA.AS",
-        "SJPE.AS",
         "IEMA.AS",
         "PAASI.PA",
         "DFND.MI",
