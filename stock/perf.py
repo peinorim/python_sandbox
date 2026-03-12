@@ -48,19 +48,20 @@ idl = {
     'AASI.PA': 0.25,
 }
 valinor = {
-    'CSPX.AS': 0.50,
+    'CSPX.AS': 0.30,
     'ACA.PA': 0.25,
-    'ISOE.AS': 0.05,
-    'GOLD.MI': 0.2,
+    'ISOE.AS': 0.1,
+    'IEMA.AS': 0.1,
+    'GOLD.MI': 0.25,
 }
 
 dad = {
     'GOLD.MI': 0.2,
     "EMBH.PA": 0.1,
-    "CSW.PA": 0.2,
-    "AFLE.PA": 0.2,
-    "AASI.PA": 0.2,
-    "AGED.AS": 0.1
+    "CSW.PA": 0.1,
+    "XGSD.DE": 0.2,
+    "COMO.PA": 0.1,
+    "AFLE.PA": 0.3
 }
 
 # Définir la période d'analyse
