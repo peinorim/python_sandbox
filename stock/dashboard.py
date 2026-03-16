@@ -35,7 +35,6 @@ SYMBOLS = {
         "GC=F",
         "SIL=F",
         "EURUSD=X",
-        "DX-Y.NYB",
         "BTC-USD"
     ],
     'dad': [
