@@ -19,23 +19,7 @@ START_DATE = "2020-01-01"
 PERIODS = 90
 SYMBOLS = {
     'my': [
-        "NVDA",
-        "ACA.PA",
-        "CSPX.AS",
-        "CNDX.AS",
-        "CW8.PA",
-        "IDVA.AS",
-        "IEMA.AS",
-        "DFND.MI",
-        "CMSE.PA",
-        "ISOE.AS",
-        "GOLD.MI",
-        "^SPX",
-        "^NDX",
-        "GC=F",
-        "SIL=F",
-        "EURUSD=X",
-        "BTC-USD"
+        "NRGW.PA"
     ],
     'dad': [
         "XGSD.DE",
