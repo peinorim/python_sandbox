@@ -27,6 +27,7 @@ SYMBOLS = {
         "IDVA.AS",
         "IEMA.AS",
         "DFND.MI",
+        "IOGP.AS",
         "CMSE.PA",
         "ISOE.AS",
         "GOLD.MI",
@@ -34,6 +35,7 @@ SYMBOLS = {
         "^NDX",
         "GC=F",
         "SIL=F",
+        "CL=F",
         "EURUSD=X",
         "BTC-USD"
     ],
