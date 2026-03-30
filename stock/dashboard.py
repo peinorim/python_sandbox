@@ -29,7 +29,6 @@ SYMBOLS = {
         "DFND.MI",
         "IOGP.AS",
         "AIGA.MI",
-        "IOGP.AS",
         "NRGW.PA",
         "CMSE.PA",
         "ISOE.AS",
