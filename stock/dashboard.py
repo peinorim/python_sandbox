@@ -38,16 +38,14 @@ SYMBOLS = {
         "GC=F",
         "SIL=F",
         "CL=F",
-        "BZ=F",
         "EURUSD=X",
         "BTC-USD"
     ],
     'dad': [
         "XGSD.DE",
         "EMHD.PA",
-        "GDIG.PA",
         "CSW.PA",
-        "COMO.PA"
+        "SGQI.PA"
     ]
 }
 
