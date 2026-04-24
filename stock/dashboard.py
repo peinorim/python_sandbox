@@ -27,6 +27,7 @@ SYMBOLS = {
         "IDVA.AS",
         "IEMA.AS",
         "DFND.MI",
+        "JEDI.PA",
         "NRGW.PA",
         "CMSE.PA",
         "ISOE.AS",
