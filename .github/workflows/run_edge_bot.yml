@@ -1,0 +1,32 @@
+name: Run edge bot
+
+on:
+  workflow_dispatch:  # permet aussi de le lancer manuellement
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    env:
+      PAPER_MODE: "true"
+      TZ: "UTC"
+      POLY_API_KEY: ${{ secrets.POLY_API_KEY }}
+      POLY_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Python configuration
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Requirements installation
+        run: |
+          pip install -r requirements_bot.txt
+
+      - name: Python run bot
+        run: |
+          cd bot
+          python safe_bot.py
