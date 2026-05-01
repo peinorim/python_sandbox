@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PAPER_MODE: "true"
+      PAPER_MODE: "false"
       TZ: "UTC"
       POLY_API_KEY: ${{ secrets.POLY_API_KEY }}
       POLY_PRIVATE_KEY: ${{ secrets.POLY_PRIVATE_KEY }}
