@@ -70,7 +70,7 @@ API_PASS = os.environ.get("POLY_PASSPHRASE", "")
 
 INITIAL_BANKROLL = float(os.environ.get("BANKROLL", "50"))
 MAX_RISK_PER_TRADE = float(os.environ.get("MAX_RISK", "0.02"))
-MIN_EDGE = float(os.environ.get("MIN_EDGE", "0.03"))
+MIN_EDGE = float(os.environ.get("MIN_EDGE", "0.02"))
 MAX_DRAWDOWN = float(os.environ.get("MAX_DRAWDOWN", "0.10"))
 SCAN_INTERVAL = int(os.environ.get("SCAN_INTERVAL", "30"))
 ENTRY_MIN = int(os.environ.get("ENTRY_MIN", "60"))
