@@ -77,11 +77,11 @@ ENTRY_MIN = int(os.environ.get("ENTRY_MIN", "60"))
 ENTRY_MAX = int(os.environ.get("ENTRY_MAX", "86400"))
 MIN_LIQUIDITY = float(os.environ.get("MIN_LIQUIDITY", "200"))
 MAX_CONCURRENT = int(os.environ.get("MAX_CONCURRENT", "200"))
-PAPER_MODE = os.environ.get("PAPER_MODE", "true").lower() == "true"
+PAPER_MODE = os.environ.get("PAPER_MODE", "false").lower() == "true"
 FEES = 0.015  # frais Polymarket ~1.5%
-MAX_RISK=0.03        # 3% max par trade
-MIN_MARKET_PRICE=0.10   # tokens > 10¢ seulement
-MAX_STAKE=5.00
+MAX_RISK = 0.03  # 3% max par trade
+MIN_MARKET_PRICE = 0.10  # tokens > 10¢ seulement
+MAX_STAKE = 5.00
 
 # ─────────────────────────────────────────────
 # 2. CLIENTS
@@ -99,11 +99,85 @@ client = ClobClient(
 )
 exchange = ccxt.binance({"enableRateLimit": True})
 
+
+def get_real_bankroll() -> float | None:
+    """
+    Récupère le solde USDC via RPC public Polygon.
+    Pas de clé API requise.
+    """
+    try:
+        from eth_account import Account
+        wallet_address = Account.from_key(PRIVATE_KEY).address
+
+        # Encode balanceOf(address)
+        padded = wallet_address[2:].lower().zfill(64)
+        data = f"0x70a08231{padded}"
+        RPC_ENDPOINTS = [
+            "https://rpc.ankr.com/polygon",
+            "https://rpc-mainnet.matic.network",
+            "https://matic-mainnet.chainstacklabs.com",
+            "https://rpc-mainnet.maticvigil.com",
+        ]
+
+        from eth_account import Account
+        wallet_address = Account.from_key(PRIVATE_KEY).address
+
+        padded = wallet_address[2:].lower().zfill(64)
+        data = f"0x70a08231{padded}"
+
+        for rpc in RPC_ENDPOINTS:
+            try:
+                resp = requests.post(
+                    rpc,
+                    json={
+                        "jsonrpc": "2.0",
+                        "method": "eth_call",
+                        "params": [
+                            {
+                                "to": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                                "data": data,
+                            },
+                            "latest",
+                        ],
+                        "id": 1,
+                    },
+                    timeout=8,
+                )
+                resp.raise_for_status()
+                result = resp.json().get("result", "0x0")
+                bal = int(result, 16) / 1_000_000
+                log.info("💰 Solde USDC via %s : %.2f$", rpc, bal)
+                return bal
+            except Exception as exc:
+                log.debug("RPC %s indisponible : %s", rpc, exc)
+                continue
+
+    except ImportError:
+        log.warning("eth_account non installé : pip install eth-account")
+    except Exception as exc:
+        log.debug("RPC indisponible : %s", exc)
+
+    return None
+
+
 # ─────────────────────────────────────────────
 # 3. ÉTAT
 # ─────────────────────────────────────────────
 bankroll = INITIAL_BANKROLL
-bankroll_engaged = 0.0  # capital dans des paris ouverts
+bankroll_engaged = 0.0
+real_bal = get_real_bankroll()
+if real_bal is not None:
+    # Solde réel = ce qui est libre (pas engagé dans des ordres ouverts)
+    bankroll = real_bal - bankroll_engaged
+    bankroll = max(0.0, bankroll)
+    log.info("Bankroll mis à jour | libre=%.2f$ engagé=%.2f$",
+             bankroll, bankroll_engaged)
+elif bankroll == 0.0:
+    # Premier cycle et API indisponible → fallback sur .env
+    bankroll = INITIAL_BANKROLL
+    log.warning("Solde réel indisponible → fallback BANKROLL=%.2f$", bankroll)
+
+# capital dans des paris ouverts
 peak_bankroll = INITIAL_BANKROLL
 open_orders = {}
 bet_market_ids = set()
@@ -117,6 +191,8 @@ _weather_cache = {}  # (lat,lon,date) → temp max
 # ─────────────────────────────────────────────
 # 4. UTILITAIRES
 # ─────────────────────────────────────────────
+
+
 def _parse_end_ts(date_str: str) -> int | None:
     if not date_str:
         return None

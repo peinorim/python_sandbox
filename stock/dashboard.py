@@ -30,6 +30,7 @@ SYMBOLS = {
         "NRGW.PA",
         "CMSE.PA",
         "BRES.PA",
+        'REMX.PA',
         "ISOE.AS",
         "GOLD.MI",
         "^SPX",
