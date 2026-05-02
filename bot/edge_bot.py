@@ -207,13 +207,13 @@ def get_real_bankroll() -> float | None:
 bankroll = INITIAL_BANKROLL
 bankroll_engaged = 0.0
 real_bal = get_real_bankroll()
-if real_bal is not None:
+if real_bal is not None and not PAPER_MODE:
     # Solde réel = ce qui est libre (pas engagé dans des ordres ouverts)
     bankroll = real_bal - bankroll_engaged
     bankroll = max(0.0, bankroll)
     log.info("Bankroll mis à jour | libre=%.2f$ engagé=%.2f$",
              bankroll, bankroll_engaged)
-elif bankroll == 0.0 and PAPER_MODE:
+elif bankroll == 0.0 or PAPER_MODE:
     # Premier cycle et API indisponible → fallback sur .env
     bankroll = INITIAL_BANKROLL
     log.warning("Solde réel indisponible → fallback BANKROLL=%.2f$", bankroll)
