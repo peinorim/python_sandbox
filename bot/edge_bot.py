@@ -34,7 +34,6 @@ Fichier .env :
 """
 
 import json
-import math
 import os
 import re
 import time
@@ -77,7 +76,7 @@ ENTRY_MIN = int(os.environ.get("ENTRY_MIN", "60"))
 ENTRY_MAX = int(os.environ.get("ENTRY_MAX", "86400"))
 MIN_LIQUIDITY = float(os.environ.get("MIN_LIQUIDITY", "200"))
 MAX_CONCURRENT = int(os.environ.get("MAX_CONCURRENT", "200"))
-PAPER_MODE = os.environ.get("PAPER_MODE", "false").lower() == "true"
+PAPER_MODE = os.environ.get("PAPER_MODE", "true").lower() == "true"
 FEES = 0.015  # frais Polymarket ~1.5%
 MAX_RISK = 0.03  # 3% max par trade
 MIN_MARKET_PRICE = 0.10  # tokens > 10¢ seulement
@@ -100,14 +99,56 @@ client = ClobClient(
 exchange = ccxt.binance({"enableRateLimit": True})
 
 
+def sync_open_positions():
+    """
+    Récupère les positions ouvertes réelles depuis le CLOB Polymarket
+    et synchronise open_orders + bet_market_ids.
+    Appelée au démarrage pour éviter les doublons après redémarrage.
+    """
+    global bankroll_engaged
+
+    try:
+        wallet = _get_wallet_address()
+        resp = requests.get(
+            "https://data-api.polymarket.com/activity",
+            params={"user": wallet, "limit": 100},
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        activity = resp.json()
+        items = activity if isinstance(activity, list) else activity.get("data", [])
+
+        log.info("%d activités trouvées.", len(items))
+        for item in items:
+            market_id = item.get("conditionId") or item.get("market", "")
+            status = item.get("status", "")
+            # Ajoute seulement les positions non résolues
+            if market_id and status not in ("RESOLVED", "CLOSED"):
+                bet_market_ids.add(market_id)
+                log.info("  Position active : %s | %s",
+                         market_id[:20], item.get("title", "?")[:50])
+
+    except Exception as exc:
+        log.warning("Sync positions impossible : %s", exc)
+
+
+def _get_wallet_address() -> str:
+    """Retourne l'adresse publique du wallet."""
+    try:
+        from eth_account import Account
+        return Account.from_key(PRIVATE_KEY).address
+    except Exception:
+        return ""
+
+
 def get_real_bankroll() -> float | None:
     """
     Récupère le solde USDC via RPC public Polygon.
     Pas de clé API requise.
     """
     try:
-        from eth_account import Account
-        wallet_address = Account.from_key(PRIVATE_KEY).address
+        wallet_address = _get_wallet_address()
 
         # Encode balanceOf(address)
         padded = wallet_address[2:].lower().zfill(64)
@@ -172,10 +213,12 @@ if real_bal is not None:
     bankroll = max(0.0, bankroll)
     log.info("Bankroll mis à jour | libre=%.2f$ engagé=%.2f$",
              bankroll, bankroll_engaged)
-elif bankroll == 0.0:
+elif bankroll == 0.0 and PAPER_MODE:
     # Premier cycle et API indisponible → fallback sur .env
     bankroll = INITIAL_BANKROLL
     log.warning("Solde réel indisponible → fallback BANKROLL=%.2f$", bankroll)
+else:
+    raise Exception("Solde indisponible")
 
 # capital dans des paris ouverts
 peak_bankroll = INITIAL_BANKROLL
@@ -1151,4 +1194,8 @@ def main():
 
 
 if __name__ == "__main__":
+    if not PAPER_MODE:
+        log.info("Synchronisation des positions ouvertes...")
+        sync_open_positions()
+
     main()
