@@ -1,5 +1,0 @@
-ccxt
-eth-account
-python-dotenv
-py_clob_client_v2
-requests
