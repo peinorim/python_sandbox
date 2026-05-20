@@ -25,6 +25,7 @@ SYMBOLS = {
         "CNDX.AS",
         "CW8.PA",
         "IEMA.AS",
+        "ALAT.PA",
         "NRGW.PA",
         "CMSE.PA",
         "BRES.PA",
