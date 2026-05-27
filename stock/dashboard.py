@@ -24,6 +24,7 @@ SYMBOLS = {
         "CSPX.AS",
         "CNDX.AS",
         "CW8.PA",
+        "ACWI.PA",
         "IEMA.AS",
         "ALAT.PA",
         "JEDI.PA",
