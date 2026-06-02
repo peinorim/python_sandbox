@@ -47,7 +47,6 @@ SYMBOLS = {
         "EMHD.PA",
         "WINC.DE",
         "GLDV.MI",
-        "SMLD.DE",
         "CSW.PA",
     ]
 }
