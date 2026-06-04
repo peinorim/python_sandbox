@@ -29,7 +29,6 @@ SYMBOLS = {
         "ALAT.PA",
         "JEDI.PA",
         "NUCL.PA",
-        "REMX.PA",
         "CMSE.PA",
         "BRES.PA",
         "ISOE.AS",
