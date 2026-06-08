@@ -36,7 +36,6 @@ SYMBOLS = {
         "^SPX",
         "^NDX",
         "GC=F",
-        "SIL=F",
         "CL=F",
         "EURUSD=X",
         "BTC-USD"
