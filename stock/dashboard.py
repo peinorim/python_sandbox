@@ -31,7 +31,6 @@ SYMBOLS = {
         "NUCL.PA",
         "CMSE.PA",
         "BRES.PA",
-        "ISOE.AS",
         "GOLD.MI",
         "^SPX",
         "^NDX",
