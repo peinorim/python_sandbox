@@ -27,7 +27,6 @@ SYMBOLS = {
         "VGWE.AS",
         "IEMA.AS",
         "ALAT.PA",
-        "JEDI.PA",
         "NUCL.PA",
         "CMSE.PA",
         "BRES.PA",
@@ -44,7 +43,7 @@ SYMBOLS = {
         "EMHD.PA",
         "WINC.DE",
         "GLDV.MI",
-        "DXSA.DE",
+        "EEI.MI",
         "CSW.PA",
     ]
 }
