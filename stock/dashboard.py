@@ -26,7 +26,7 @@ SYMBOLS = {
         "CW8.PA",
         "VGWE.AS",
         "IEMA.AS",
-        "ALAT.PA",
+        "WQTM.PA",
         "NUCL.PA",
         "CMSE.PA",
         "BRES.PA",
