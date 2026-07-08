@@ -1,5 +1,8 @@
+import atexit
 import os
 import pickle
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -12,7 +15,33 @@ from redis_cache_client import RedisCache
 
 DATE_FORMAT = "%Y-%m-%d"
 EXPIRE_CACHE_SECONDS = 300
+MAX_WORKERS = 8
 redis_conn = RedisCache()
+
+_thread_local = threading.local()
+_curl_sessions = []
+_curl_sessions_lock = threading.Lock()
+
+def _get_curl_cffi_session():
+    session = getattr(_thread_local, "session", None)
+    if session is None:
+        from curl_cffi import requests as curl_requests
+        session = curl_requests.Session(impersonate="chrome110")
+        session.verify = False
+        _thread_local.session = session
+        with _curl_sessions_lock:
+            _curl_sessions.append(session)
+    return session
+
+@atexit.register
+def _close_curl_cffi_sessions():
+    with _curl_sessions_lock:
+        for session in _curl_sessions:
+            try:
+                session.close()
+            except Exception:
+                pass
+        _curl_sessions.clear()
 
 
 class FearGreed:
@@ -67,24 +96,34 @@ class FearGreed:
 class StockAPI:
 
     def get_stock_figures(self, symbols: list = None, start_date=None, periods=None, to_html: bool = False):
-        stocks = []
-        for symbol in symbols:
+
+        if not symbols:
+            return []
+
+        def build_figure(symbol):
             cache_key = f"{symbol}-{start_date}-{periods}"
-            if not redis_conn.get(cache_key):
+            cached = redis_conn.get(cache_key)
+
+            if not cached:
                 info, data = self.get_stock_data(symbol=symbol, start_date=start_date)
                 figure = Forecast().render_figure(symbol=symbol, info=info, data=data, periods=periods)
                 redis_conn.set(cache_key, pickle.dumps(figure), ex=EXPIRE_CACHE_SECONDS)
             else:
-                figure = pickle.loads(redis_conn.get(cache_key))
+                figure = pickle.loads(cached)
 
             if to_html:
                 figure.write_html(f"offline/{symbol}.html", include_plotlyjs='cdn', full_html=False)
 
-            stocks.append(
-                html.Div(children=[
-                    dcc.Graph(id=f'forecast-{symbol.lower()}', figure=figure)
-                ], className='col-md-6')
-            )
+            return symbol, figure
+        stocks = []
+
+        with ThreadPoolExecutor(max_workers=min(MAX_WORKERS, len(symbols))) as executor:
+            for symbol, figure in executor.map(build_figure, symbols):
+                stocks.append(
+                    html.Div(children=[
+                        dcc.Graph(id=f'forecast-{symbol.lower()}', figure=figure)
+                    ], className='col-md-6')
+                )
         return stocks
 
     def get_stock_data(self, symbol: str = None, start_date: str = None):
@@ -92,14 +131,10 @@ class StockAPI:
             forecast = {'ds': [], 'y': []}
 
             if os.getenv("OFFICE", "false") == "true":
-                from curl_cffi import requests
                 yf.config.network.proxy = {'http': "http://localhost:3128", 'https': "http://localhost:3128"}
-
-                with requests.Session(impersonate="chrome110") as session:
-                    session.verify = False
-                    info = yf.Ticker(ticker=symbol, session=session).info
-                    data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
-                    ignore_tz = True, session=session)
+                session = _get_curl_cffi_session()
+                info = yf.Ticker(ticker=symbol, session=session).info
+                data = yf.download(symbol, start=start_date, end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"), ignore_tz = True, session=session)
 
             else:
                 info = yf.Ticker(ticker=symbol).info
