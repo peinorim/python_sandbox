@@ -26,7 +26,7 @@ SYMBOLS = {
         "CW8.PA",
         "VGWE.AS",
         "AHYI.DE",
-        "IEMA.AS",
+        "EMIM.AS",
         "CMSE.PA",
         "GOLD.MI",
         "^SPX",
