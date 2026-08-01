@@ -1,4 +1,4 @@
-oui import os
+import os
 from os import getenv
 
 import dash
@@ -24,9 +24,10 @@ SYMBOLS = {
         "CSPX.AS",
         "CNDX.AS",
         "CW8.PA",
-        "RS2K.PA",
+        "ACWI.PA",
         "VGWE.AS",
         "EMIM.AS",
+        "RS2K.PA",
         "CMSE.PA",
         "GOLD.MI",
         "^SPX",
