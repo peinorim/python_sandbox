@@ -40,7 +40,7 @@ SYMBOLS = {
     'dad': [
         "XGSD.DE",
         "WINC.DE",
-        "GLDV.MI",
+        "ZPRG.DE",
         "EEI.MI",
         "EMHD.PA",
         "CSW.PA",
