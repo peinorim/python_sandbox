@@ -43,6 +43,11 @@ def render_html_index(symbols: list = None):
       min-height: 500px;
       position: relative;
     }}
+    @media (max-width: 600px) {{
+      .grid {{
+        grid-template-columns: 1fr;
+      }}
+    }}
     /* Spinner de chargement */
     .chart-cell:empty::after {{
       content: '';
