@@ -1,7 +1,9 @@
 from datetime import timedelta
 
+import numpy as np
+import pandas as pd
+import plotly.graph_objs as go
 from prophet import Prophet
-from prophet.plot import plot_plotly
 
 # --- Palette moderne ---
 _COLORS = {
@@ -20,6 +22,138 @@ _COLORS = {
 }
 
 
+def _plot_plotly(
+    m: Prophet,
+    fcst: pd.DataFrame,
+    uncertainty: bool = True,
+    plot_cap: bool = True,
+    trend: bool = False,
+    changepoints: bool = False,
+    changepoints_threshold: float = 0.01,
+    xlabel: str = 'ds',
+    ylabel: str = 'y',
+    figsize: tuple = (900, 600),
+) -> go.Figure:
+    """Réimplémentation locale de prophet.plot.plot_plotly.
+
+    La version fournie par le package prophet (>=1.4.0) contient des
+    `assert m.history` / `assert m.changepoints` qui déclenchent
+    `ValueError: The truth value of a DataFrame is ambiguous` dès que
+    `m.history` contient plus d'une ligne (pandas >= 2). Cette version
+    corrige ces vérifications en utilisant `is not None` / `len(...) > 0`.
+    """
+    prediction_color = '#0072B2'
+    error_color = 'rgba(0, 114, 178, 0.2)'
+    actual_color = 'black'
+    cap_color = 'black'
+    trend_color = '#B23B00'
+    line_width = 2
+    marker_size = 4
+
+    data = []
+    # Add actual
+    assert m.history is not None
+    data.append(go.Scatter(
+        name='Actual',
+        x=m.history['ds'],
+        y=m.history['y'],
+        marker=dict(color=actual_color, size=marker_size),
+        mode='markers'
+    ))
+    # Add lower bound
+    if uncertainty and m.uncertainty_samples:
+        data.append(go.Scatter(
+            x=fcst['ds'],
+            y=fcst['yhat_lower'],
+            mode='lines',
+            line=dict(width=0),
+            hoverinfo='skip'
+        ))
+    # Add prediction
+    data.append(go.Scatter(
+        name='Predicted',
+        x=fcst['ds'],
+        y=fcst['yhat'],
+        mode='lines',
+        line=dict(color=prediction_color, width=line_width),
+        fillcolor=error_color,
+        fill='tonexty' if uncertainty and m.uncertainty_samples else 'none'
+    ))
+    # Add upper bound
+    if uncertainty and m.uncertainty_samples:
+        data.append(go.Scatter(
+            x=fcst['ds'],
+            y=fcst['yhat_upper'],
+            mode='lines',
+            line=dict(width=0),
+            fillcolor=error_color,
+            fill='tonexty',
+            hoverinfo='skip'
+        ))
+    # Add caps
+    if 'cap' in fcst and plot_cap:
+        data.append(go.Scatter(
+            name='Cap',
+            x=fcst['ds'],
+            y=fcst['cap'],
+            mode='lines',
+            line=dict(color=cap_color, dash='dash', width=line_width),
+        ))
+    if m.logistic_floor and 'floor' in fcst and plot_cap:
+        data.append(go.Scatter(
+            name='Floor',
+            x=fcst['ds'],
+            y=fcst['floor'],
+            mode='lines',
+            line=dict(color=cap_color, dash='dash', width=line_width),
+        ))
+    # Add trend
+    if trend:
+        data.append(go.Scatter(
+            name='Trend',
+            x=fcst['ds'],
+            y=fcst['trend'],
+            mode='lines',
+            line=dict(color=trend_color, width=line_width),
+        ))
+    # Add changepoints
+    assert m.changepoints is not None
+    if changepoints and len(m.changepoints) > 0:
+        signif_changepoints = m.changepoints[
+            np.abs(np.nanmean(m.params['delta'], axis=0)) >= changepoints_threshold
+        ]
+        data.append(go.Scatter(
+            x=signif_changepoints,
+            y=fcst.loc[fcst['ds'].isin(signif_changepoints), 'trend'],
+            marker=dict(size=50, symbol='line-ns-open', color=trend_color,
+                        line=dict(width=line_width)),
+            mode='markers',
+            hoverinfo='skip'
+        ))
+
+    layout = dict(
+        showlegend=False,
+        width=figsize[0],
+        height=figsize[1],
+        yaxis=dict(title=ylabel),
+        xaxis=dict(
+            title=xlabel,
+            type='date',
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=7, label='1w', step='day', stepmode='backward'),
+                    dict(count=1, label='1m', step='month', stepmode='backward'),
+                    dict(count=6, label='6m', step='month', stepmode='backward'),
+                    dict(count=1, label='1y', step='year', stepmode='backward'),
+                    dict(step='all')
+                ])
+            ),
+            rangeslider=dict(visible=True),
+        ),
+    )
+    return go.Figure(data=data, layout=layout)
+
+
 class Forecast:
 
     def __init__(self):
@@ -33,7 +167,7 @@ class Forecast:
     def render_figure(self, symbol: str = None, info: dict = None, data=None, periods=None):
 
         forecast = self.get_future_data(data=data, periods=periods)
-        forecast_fig = plot_plotly(self.m, forecast, uncertainty=True, plot_cap=True, changepoints=True)
+        forecast_fig = _plot_plotly(self.m, forecast, uncertainty=True, plot_cap=True, changepoints=True)
 
         # ── Titre ────────────────────────────────────────────
         title_text = (
