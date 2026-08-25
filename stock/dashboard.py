@@ -42,7 +42,6 @@ SYMBOLS = {
         "ZPRG.DE",
         "EEI.MI",
         "EMHD.PA",
-        "EXXW.DE",
         "CSW.PA",
     ]
 }
