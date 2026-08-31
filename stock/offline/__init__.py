@@ -17,7 +17,7 @@ def render_html_index(symbols: list = None):
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-  <script src="https://cdn.plot.ly/plotly-3.3.1.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-4.0.0.min.js"></script>
   <style>
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{
