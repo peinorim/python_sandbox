@@ -27,7 +27,6 @@ SYMBOLS = {
         "ACWI.PA",
         "VGWE.AS",
         "EMIM.AS",
-        "ISAE.AS",
         "CMSE.PA",
         "GOLD.MI",
         "^SPX",
