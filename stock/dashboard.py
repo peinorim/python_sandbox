@@ -39,8 +39,6 @@ SYMBOLS = {
     'dad': [
         "XGSD.DE",
         "WINC.DE",
-        "ZPRG.DE",
-        "EEI.MI",
         "EMHD.PA",
         "CSW.PA",
     ]
