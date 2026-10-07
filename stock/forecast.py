@@ -156,13 +156,51 @@ def _plot_plotly(
 
 class Forecast:
 
-    def __init__(self):
-        self.m = Prophet()
+    # Paramètres Prophet adaptés aux cours boursiers (surchargeables).
+    DEFAULT_PARAMS = dict(
+        growth="linear",
+        # changepoint_prior_scale=0.1,   # + flexible que 0.05 (ruptures de tendance fréquentes)
+        # changepoint_range=0.95,        # changepoints jusqu'à 95 % de l'historique (récent important)
+        # n_changepoints=40,
+        seasonality_mode="multiplicative",  # amplitude proportionnelle au prix
+        seasonality_prior_scale=5.0,   # limite le sur-apprentissage de la saisonnalité
+        yearly_seasonality=True,
+        weekly_seasonality=False,      # pas de cotation le week-end
+        daily_seasonality=False,
+        interval_width=0.80,
+        uncertainty_samples=300,
+    )
 
-    def get_future_data(self, data: dict = None, periods: int = None):
-        self.m.fit(data)
-        future = self.m.make_future_dataframe(periods=periods)
-        return self.m.predict(future)
+    def __init__(self, log_transform: bool = True, business_days: bool = True, **params):
+        """
+        log_transform : ajuste sur log(prix) (rendements ~ multiplicatifs, prix > 0).
+        business_days : prévisions sur jours ouvrés uniquement.
+        params        : tout paramètre Prophet, écrase DEFAULT_PARAMS.
+        """
+        self.log_transform = log_transform
+        self.business_days = business_days
+        merged = {**self.DEFAULT_PARAMS, **params}
+        if log_transform and "seasonality_mode" not in params:
+            merged["seasonality_mode"] = "additive"  # déjà multiplicatif via le log
+        self.m = Prophet(**merged)
+        # Saisonnalité mensuelle légère (effets de fin/début de mois)
+        self.m.add_seasonality(name="monthly", period=30.5, fourier_order=3, mode="additive")
+
+    def get_future_data(self, data: pd.DataFrame = None, periods: int = None):
+        df = data.copy()
+        if self.log_transform:
+            df["y"] = np.log(df["y"].clip(lower=1e-9))
+        self.m.fit(df)
+        future = self.m.make_future_dataframe(
+            periods=periods, freq="B" if self.business_days else "D"
+        )
+        fcst = self.m.predict(future)
+        if self.log_transform:
+            for col in ("yhat", "yhat_lower", "yhat_upper", "trend"):
+                fcst[col] = np.exp(fcst[col])
+            # Remet l'historique à l'échelle réelle pour l'affichage
+            self.m.history["y"] = np.exp(self.m.history["y"])
+        return fcst
 
     def render_figure(self, symbol: str = None, info: dict = None, data=None, periods=None):
 
