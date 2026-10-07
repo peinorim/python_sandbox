@@ -86,7 +86,7 @@ class StockAPI:
             stocks.append(
                 html.Div(children=[
                     dcc.Graph(id=f'forecast-{symbol.lower()}', figure=figure)
-                ])
+                ], className='col-sm-12 col-md-6')
             )
         return stocks
 
