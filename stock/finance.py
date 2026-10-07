@@ -86,7 +86,7 @@ class StockAPI:
             stocks.append(
                 html.Div(children=[
                     dcc.Graph(id=f'forecast-{symbol.lower()}', figure=figure)
-                ], className='col-sm-12 col-md-6')
+                ])
             )
         return stocks
 
@@ -111,8 +111,12 @@ class StockAPI:
                                    end=(datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d"),
                                    ignore_tz=True)
 
-            forecast['ds'] = data.index.tolist()
-            forecast['y'] = data.Close.stack().tolist()
+            close = data['Close']
+            if isinstance(close, pd.DataFrame):
+                close = close.iloc[:, 0]
+            close = close.dropna()
+            forecast['ds'] = close.index.tolist()
+            forecast['y'] = close.tolist()
             return info, pd.DataFrame.from_dict(forecast)
         except Exception as err:
             print(err)
