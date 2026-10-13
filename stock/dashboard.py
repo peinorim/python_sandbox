@@ -41,6 +41,7 @@ SYMBOLS = {
         "WINC.DE",
         "EMHD.PA",
         "CSW.PA",
+        "IQQ0.DE"
     ]
 }
 
