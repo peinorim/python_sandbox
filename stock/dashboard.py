@@ -27,7 +27,6 @@ SYMBOLS = {
         "ACWI.PA",
         "VGWE.AS",
         "STAW.MI",
-        "EDEU.PA",
         "AEME.PA",
         "CMSE.PA",
         "COMO.PA",
