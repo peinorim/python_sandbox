@@ -253,6 +253,19 @@ class Forecast:
                     trace.name = "Changepoint"
                     trace.showlegend = True
 
+        # ── Moyennes mobiles MM50 / MM200 ────────────────────
+        hist = self.m.history.sort_values("ds")
+        for window, color in ((50, "#3fb950"), (200, "#d2a8ff")):
+            ma = hist["y"].rolling(window=window, min_periods=window).mean()
+            forecast_fig.add_trace(go.Scatter(
+                name=f"MM{window}",
+                x=hist["ds"],
+                y=ma,
+                mode="lines",
+                line=dict(color=color, width=1.5),
+                showlegend=True,
+            ))
+
         # ── Range par défaut : 1 an ──────────────────────────
         last_date = forecast["ds"].max()
         one_year_ago = last_date - timedelta(days=365)
