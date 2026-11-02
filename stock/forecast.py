@@ -253,18 +253,24 @@ class Forecast:
                     trace.name = "Changepoint"
                     trace.showlegend = True
 
-        # ── Moyennes mobiles MM50 / MM200 ────────────────────
+        # ── Moyennes mobiles MM200 / SMA30 daily / SMA30 weekly ──
         hist = self.m.history.sort_values("ds")
-        for window, color in ((50, "#3fb950"), (200, "#d2a8ff")):
-            ma = hist["y"].rolling(window=window, min_periods=window).mean()
-            forecast_fig.add_trace(go.Scatter(
-                name=f"MM{window}",
-                x=hist["ds"],
-                y=ma,
-                mode="lines",
-                line=dict(color=color, width=1.5),
-                showlegend=True,
-            ))
+        ma200 = hist["y"].rolling(window=200, min_periods=200).mean()
+        forecast_fig.add_trace(go.Scatter(
+            name="MM200", x=hist["ds"], y=ma200, mode="lines",
+            line=dict(color="#d2a8ff", width=1.5), showlegend=True,
+        ))
+        sma30_d = hist["y"].rolling(window=30, min_periods=30).mean()
+        forecast_fig.add_trace(go.Scatter(
+            name="SMA30 daily", x=hist["ds"], y=sma30_d, mode="lines",
+            line=dict(color="#58a6ff", width=1.5), showlegend=True,
+        ))
+        weekly = hist.set_index("ds")["y"].resample("W").last().dropna()
+        sma30_w = weekly.rolling(window=30, min_periods=30).mean()
+        forecast_fig.add_trace(go.Scatter(
+            name="SMA30 weekly", x=sma30_w.index, y=sma30_w.values, mode="lines",
+            line=dict(color="#58a6ff", width=1.5, dash="dash"), showlegend=True,
+        ))
 
         # ── Range par défaut : 1 an ──────────────────────────
         last_date = forecast["ds"].max()
