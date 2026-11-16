@@ -2,12 +2,8 @@ from datetime import datetime, timedelta
 
 import dash
 from dash import dcc, html
-import dash_bootstrap_components as dbc
 import yfinance as yf
 import plotly.graph_objs as go
-from dash_bootstrap_templates import load_figure_template
-
-load_figure_template("darkly")
 
 
 def download_data(tickers, start, end):
@@ -76,9 +72,10 @@ emu_value = calculate_portfolio_performance(stocks=emu, start_date=start_date, e
 idl_value = calculate_portfolio_performance(stocks=idl, start_date=start_date, end_date=end_date)
 dad_value = calculate_portfolio_performance(stocks=dad, start_date=start_date, end_date=end_date)
 
-app = dash.Dash(external_stylesheets=[dbc.themes.DARKLY])
-app.layout = dbc.Container([
-    dbc.Row([
+DARKLY = "https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/darkly/bootstrap.min.css"
+app = dash.Dash(external_stylesheets=[DARKLY])
+app.layout = html.Div([
+    html.Div([
         html.Div(className="col-md-2"),
         html.Div([dcc.Graph(
             id='performance-graph',
@@ -132,14 +129,16 @@ app.layout = dbc.Container([
                     xaxis={'title': 'Date'},
                     yaxis={'title': 'Cumulative Returns'},
                     legend={'x': 0, 'y': 1},
-                    template='darkly',
+                    template='plotly_dark',
+                    paper_bgcolor='#222',
+                    plot_bgcolor='#222',
                     hovermode='closest'
                 )
             }
         )], className="col-md-8"),
         html.Div(className="col-md-2"),
-    ])
-], fluid=True)
+    ], className="row")
+], className="container-fluid")
 
 if __name__ == '__main__':
     app.run(debug=True)
