@@ -11,7 +11,7 @@ from forecast import Forecast
 from offline import render_html_index
 
 to_html = os.getenv('OFFLINE', 'false') == 'true'
-DARKLY = "https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/darkly/bootstrap.min.css"
+DARKLY = "https://cdn.jsdelivr.net/npm/bootswatch@5.3.8/dist/darkly/bootstrap.min.css"
 app = dash.Dash(external_stylesheets=[DARKLY])
 
 START_DATE = "2020-01-01"
