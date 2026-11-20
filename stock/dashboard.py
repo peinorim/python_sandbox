@@ -25,7 +25,7 @@ SYMBOLS = {
         "CNDX.AS",
         "CW8.PA",
         "ACWI.PA",
-        "VGWE.AS",
+        "CSW.PA",
         "STAW.MI",
         "AEME.PA",
         "CMSE.PA",
@@ -42,7 +42,7 @@ SYMBOLS = {
         "XGSD.DE",
         "WINC.DE",
         "EMHD.PA",
-        "CSW.PA",
+        "TDIV.AS",
         "IQQ0.DE"
     ]
 }
