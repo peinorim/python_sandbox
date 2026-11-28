@@ -27,6 +27,7 @@ SYMBOLS = {
         "ACWI.PA",
         "CSW.PA",
         "CD9.PA",
+        "CG1.PA",
         "STAW.MI",
         "GOLD.MI",
         "^SPX",
